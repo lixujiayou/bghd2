@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#DD0010</color>
+    <color name="colorPrimaryDark">#DD0010</color>
+    <color name="colorAccent">#118EE3</color>
+
+
+    <color name="colorPrimaryAlpha">#12B7F5</color>
+    <color name="textcolor_yellow_3">#ef8824</color>
+    <color name="textcolor_yellow_4">#FEEFB8</color>
+
+    <color name="white">#FFFFFF</color>
+    <color name="white_t">#44FFFFFF</color>
+    <color name="textcolor_old">#666666</color>
+    <color name="textcolor_main_2">#DCDDE1</color>
+    <color name="line_q">#E9E6E6</color>
+    <color name="black_tran">#99C7C7C7</color>
+    <color name="transparent">#00000000</color>
+    <color name="red">#FF0000</color>
+    <color name="theme_body">#cc22292c</color>
+
+    <color name="hui">#E6E3E5</color>
+    <color name="backround_white">#F4F6F6</color>
+    <color name="backround_topic">#5F7872</color>
+    <color name="backround_hui">#F9F9F9</color>
+    <color name="white_hui">#E6E9EB</color>
+    <color name="h_line">#ACABAE</color>
+    <color name="hui_q">#E6E3E5</color>
+    <color name="textcolor_blue_hui">#BEE4F8</color>
+    <color name="b_next">#2FA6FC</color>
+    <color name="b_commit">#D35336</color>
+    <color name="b_photo">#32A84A</color>
+    <color name="backlound_more">#ECEFF6</color>
+    <color name="backlound_more_2">#E7EAEC</color>
+    <color name="textsize_qian">#4A4A4A</color>
+    <color name="black">#000000</color>
+    <color name="line_color">#EDEEF3</color>
+
+
+
+    <color name="line_colors">#3399ff</color>
+
+
+
+    <color name="blue_s">#3593D2</color>
+    <color name="textcolor_yellow">#FFA14B</color>#ef8824
+    <color name="textcolor_yellow_2">#F18A42</color>
+    <color name="textcolor_6">#666666</color>
+    <color name="blackround_nwhite">#F8F8F8</color>
+    <color name="btn_qing">#7ED321</color>
+    <color name="btn_qing_s">#6FC40E</color>
+    <color name="pink">#F63F56</color>f
+    <color name="search_backround">#EDEEF3</color>
+    <color name="floor_status_no">#D5DDF1</color>
+    <color name="floor_status_ing">#FF2D47</color>
+    <color name="floor_status_ok">#7ED321</color>
+    <color name="floor_status_no_textcolor">#8794B8</color>
+    <color name="act_background">#efefef</color>
+
+
+    <color name="red_normal">#FF0000</color>
+    <color name="red_pressed">#FF6666</color>
+    <color name="green_normal">#37C000</color>
+    <color name="green_pressed">#30A070</color>
+    <color name="purple_normal">#9932CC</color>
+    <color name="purple_pressed">#9F79EE</color>
+    <!--<color name="textcolor_m">#5E6379</color>-->
+
+    <!--上传题库色值-->
+    <color name="nick">#517fae</color>
+    <color name="item_bottom_text">#8e8e8e</color>
+    <color name="item_showmore_click">#c6c6c6</color>
+    <color name="line_bg">#e5e5e5</color>
+    <!--点赞popup色值-->
+    <color name="comment_popup_bg">#4c5154</color>
+    <color name="comment_popup_tx_bg">#c7c7c7</color>
+    <!--文字颜色-->
+    <color name="text_hint_color">#bababa</color>
+    <color name="normal_font_color">#1A1A1A</color>
+    <!--popup背景蒙层-->
+    <color name="popup_background">#8e030303</color>
+    <!--other-->
+    <color name="wechat_green_bg">#10d21c</color>
+    <color name="wechat_green_bg_click">#5eec67</color>
+    <color name="comment_click_bg">#CCD2DF</color>
+    <color name="delete_click_bg">#EAEAEA</color>
+    <!--分割线-->
+    <color name="gray_divider">#d7dce1</color>
+    <color name="dark_gray_divider">#bbc2ca</color>
+    <color name="timeline_background">#f4f6f8</color>
+    <!--刷新头头-->
+    <color name="ptr_header_bg">#323232</color>
+    <color name="action_bar_bg">#232426</color>
+    <color name="stroke_bg">#2b2b2b</color>
+    <color name="color_f9f9f9">#f9f9f9</color>
+    <color name="color_c6c6c6">#c6c6c6</color>
+    <color name="round_rect_bg">#f8f8f8</color>
+
+
+    <color name="text_comment">#5C6F98</color>
+    <color name="textcolor_1">#4a4a4a</color>
+    <color name="textcolor_2">#6b6868</color>
+    <color name="textcolor_3">#d8d8d8</color>
+    <color name="textcolor_m">#bfbfbf</color>
+    <color name="textcolor_4">#7D7D7D</color>
+    <color name="textcolor_7">#232321</color>
+    <color name="photopicker_background">#181819</color>
+
+    <color name="crop__selector_pressed">#1a000000</color>
+    <color name="crop__selector_focused">#77000000</color>
+    <color name="crop__button_bar">#f3f3f3</color>
+    <color name="crop__button_text">#666666</color>
+    <color name="lightgrey">#ff888888</color>
+    <color name="listItemPressedColor">#19000000</color>
+    <color name="listItemPressedColor2">@color/tran_hui_press</color>
+    <color name="text_color_green">#009688</color>
+    <color name="background_daytime_material_blue">#65dbd5</color>
+    <color name="delete_btn_press">#f75549</color>
+    <color name="fab_color_pressed">@color/bright_foreground_disabled_material_dark</color>
+
+    <color name="style_book_color_amber">#ffc170</color>
+    <color name="style_book_color_green">#73c778</color>
+    <color name="style_book_color_blue">#5677fc</color>
+    <color name="style_book_color_gray">#757575</color>
+
+    <color name="gray_100">#f5f5f5</color>
+    <color name="gray_200">#eeeeee</color>
+    <color name="gray_300">#e0e0e0</color>
+    <color name="gray_400">#bdbdbd</color>
+    <color name="gray_800">#424242</color>
+    <color name="teal_200">#80cbc4</color>
+    <color name="teal_300">#4db6ac</color>
+    <color name="teal_400">#26a69a</color>
+    <color name="teal_500">#009688</color>
+
+    <color name="second_color">#888888</color>
+    <color name="devide_line">#CBCED2</color>
+    <color name="theme_color">#00c0ff</color>
+    <integer-array name="gplus_colors">
+        <item>@color/gplus_color_1</item>
+        <item>@color/gplus_color_2</item>
+        <item>@color/gplus_color_3</item>
+        <item>@color/gplus_color_4</item>
+    </integer-array>
+    <color name="gplus_color_1">#3e802f</color>
+    <color name="gplus_color_2">#00c0ff</color>
+    <color name="gplus_color_3">#b23424</color>
+    <color name="gplus_color_4">#f4b400</color>
+
+    <color name="tran_hui">#22000000</color>
+    <color name="tran_hui_press">#44000000</color>
+
+
+    <color name="map_cicle">#ECF3F988</color>
+
+    <!--ZXING-->
+    <color name="black_trans50">#80000000</color>
+    <color name="teal">#008080</color>
+    <color name="teal_50">#e0f2f1</color>
+    <color name="teal_70">#009688</color>
+    <color name="teal_80">#00796B</color>
+    <color name="black_trans60">#99000000</color>
+    <color name="white100">#e3e3e3</color>
+    <color name="gray700">#616161</color>
+</resources>

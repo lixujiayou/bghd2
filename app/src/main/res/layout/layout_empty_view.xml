@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    >
+
+
+<ImageView
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    android:layout_above="@+id/tv_load_return"
+    android:src="@drawable/icon_nodata"
+    android:layout_marginBottom="6dp"
+    />
+    <TextView
+        android:id="@+id/tv_load_return"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/textsize_16"
+        android:textColor="@color/textcolor_2"
+        android:text="点我重新加载"
+        android:layout_centerInParent="true"
+        />
+</RelativeLayout>
