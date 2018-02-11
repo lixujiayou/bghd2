@@ -7,6 +7,7 @@ package com.bghd.express.core;
 import com.bghd.express.entiy.AdressEntity;
 import com.bghd.express.entiy.OrderListEntity;
 import com.bghd.express.entiy.SaveOrderEntity;
+import com.bghd.express.entiy.ShowImgEntity;
 import com.bghd.express.entiy.TellEntity;
 import com.bghd.express.entiy.UserEntity;
 
@@ -61,6 +62,54 @@ public interface MallRequest {
             , @Field("order_weight") String order_weight
             , @Field("manual") String manual
     );
+
+    @FormUrlEncoded
+    @POST(AllUrl.getShowImgList)
+    Observable<ShowImgEntity> getShowImgList(@Field("id") String id);
+
+    @FormUrlEncoded
+    @POST(AllUrl.rijie)
+    Observable<SaveOrderEntity> rijie(@Field("uid") String uid);
+
+
+
+    //添加通讯录
+    //      uid
+    //    type   （shipuser|getuser）  寄件人|收件人
+    //    truename  真实姓名
+    //    mobile   手机号
+    //    address_id   获取三级联动的地址
+    @FormUrlEncoded
+    @POST(AllUrl.addTellList)
+    Observable<SaveOrderEntity> addTell(@Field("uid") String id
+            ,@Field("type") String type
+            ,@Field("truename") String truename
+            ,@Field("mobile") String mobile
+            ,@Field("address_id") String address_id
+            ,@Field("address") String address
+    );
+
+
+    //    修改通讯录
+    //id  通讯录ID
+    //    truename  真实姓名
+    //    mobile   手机号
+    //    address_id  三级联动地址id 一户给你发获取地址的接口
+    //    address   详细地址
+    @FormUrlEncoded
+    @POST(AllUrl.mChangeTell)
+    Observable<SaveOrderEntity> changeTell(@Field("id") String id
+            ,@Field("truename") String truename
+            ,@Field("mobile") String mobile
+            ,@Field("address_id") String address_id
+            ,@Field("address") String address
+    );
+
+
+
+    @FormUrlEncoded
+    @POST(AllUrl.removeTell)
+    Observable<SaveOrderEntity> removeTell(@Field("id") String id);
 
 
 //    @FormUrlEncoded

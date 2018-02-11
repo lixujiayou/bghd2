@@ -15,7 +15,7 @@ public class AllUrl {
     public final static String mGetOrderList = "dingdan";
 
 
-    //修改通讯录
+    //    修改通讯录
     //id  通讯录ID
     //    truename  真实姓名
     //    mobile   手机号
@@ -38,11 +38,20 @@ public class AllUrl {
     //    truename  真实姓名
     //    mobile   手机号
     //    address_id   获取三级联动的地址
+    //address
     public final static String addTellList = "addnotes";
 
     //删除通讯录
     //      id
     public final static String removeTell = "delnotes";
+
+    //轮播图  无参数
+    public final static String getShowImgList = "apppic";
+
+
+    //日结
+    //只穿一个uid 就行
+    public final static String rijie = "rijie";
 
 
     //下单

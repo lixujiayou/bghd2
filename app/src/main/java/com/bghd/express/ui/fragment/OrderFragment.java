@@ -25,6 +25,7 @@ import com.bghd.express.ui.fragment.child.OnLineFragment;
 import com.bghd.express.ui.order.PlaceOrderActivity;
 import com.bghd.express.ui.order.SearchOrderActivity;
 import com.bghd.express.utils.base.BaseFragment;
+import com.bghd.express.utils.tools.ToolUtil;
 import com.cazaea.sweetalert.SweetAlertDialog;
 
 import org.greenrobot.eventbus.Subscribe;
@@ -139,7 +140,7 @@ public class OrderFragment extends BaseFragment implements View.OnClickListener 
     private void selectOrderNum() {
         AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
         //  builder.setIcon(R.drawable.ic_launcher);
-        builder.setTitle("请选择新增时的'订单号获取方式'");
+        builder.setTitle("请选择'订单号获取方式'");
         //    指定下拉列表的显示数据
         final String[] cities = {"自动匹配", "指定扫描"};
         //    设置一个下拉的列表选择项
@@ -195,5 +196,13 @@ public class OrderFragment extends BaseFragment implements View.OnClickListener 
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         menu.clear();
         inflater.inflate(R.menu.menu_search, menu);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if(!ToolUtil.isEmpty(list_fragmet)){
+            list_fragmet.clear();
+        }
     }
 }

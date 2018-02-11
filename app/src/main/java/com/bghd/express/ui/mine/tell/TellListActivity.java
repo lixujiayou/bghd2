@@ -24,7 +24,9 @@ import android.widget.TextView;
 import com.bghd.express.R;
 import com.bghd.express.adapter.TellListAdapter;
 import com.bghd.express.core.Constance;
+import com.bghd.express.entiy.SaveOrderEntity;
 import com.bghd.express.entiy.TellEntity;
+import com.bghd.express.model.RemoveTellModel;
 import com.bghd.express.model.TellListModel;
 import com.bghd.express.ui.order.AdressListActivity;
 import com.bghd.express.ui.order.SearchOrderActivity;
@@ -81,15 +83,10 @@ public class TellListActivity extends BaseActivity implements Toolbar.OnMenuItem
 
 
     private TellListModel tellListModel;
-
+    private RemoveTellModel removeTellModel;
 
     private DeletableEditText etSearch;
-
-
-
     private int page = 1;
-
-
 
     @Override
     protected void initContentView(Bundle savedInstanceState) {
@@ -113,7 +110,7 @@ public class TellListActivity extends BaseActivity implements Toolbar.OnMenuItem
                     if (!StringUtils.isEmpty(strs)) {
                         tellListModel.loadTellList(mRequestClient
                                 ,String.valueOf(page)
-                                , String.valueOf(Constance.ORDER_First_NUM)
+                                ,String.valueOf(Constance.ORDER_First_NUM)
                                 ,queryStatus
                                 ,strs);
                     } else {
@@ -134,6 +131,7 @@ public class TellListActivity extends BaseActivity implements Toolbar.OnMenuItem
             mToolbar.setTitle("我的收件人");
             queryStatus = getuser;
         }
+        Log.d("qqqq","mTellType=="+mTellType);
         mToolbar.setNavigationIcon(R.drawable.icon_cancle);
         setSupportActionBar(mToolbar);
         mToolbar.setOnMenuItemClickListener(this);
@@ -181,7 +179,7 @@ public class TellListActivity extends BaseActivity implements Toolbar.OnMenuItem
             @Override
             public void onItemSwiped(RecyclerView.ViewHolder viewHolder, int pos) {
                 //删除后调用
-
+                removeTellModel.removeTell(mRequestClient,tellList.get(pos).getId(),true);
                 Log.d("qqqqq","onItemSwiped"+pos);
             }
 
@@ -230,13 +228,25 @@ public class TellListActivity extends BaseActivity implements Toolbar.OnMenuItem
             @Override
             public void onItemClick(BaseQuickAdapter adapter, View view, int position) {
                 if(mTellStatus.equals(TELL_STATUS_MINE)){
-
+                    Log.d("qqqqq","TELL_TYPE"+mTellType);
+                    Log.d("qqqqq","TELL_STATUS"+AddTellActivity.TELL_STATUS_EDIT);
+                    Intent eIntent = new Intent(TellListActivity.this,AddTellActivity.class);
+                    eIntent.putExtra(AddTellActivity.TELL_TYPE,mTellType);
+                    eIntent.putExtra(AddTellActivity.TELL_STATUS,AddTellActivity.TELL_STATUS_EDIT);
+                    eIntent.putExtra(AddTellActivity.ADRESS_INFO,tellList.get(position));
+                    startActivityForResult(eIntent,1);
                 }else{
                     Intent fIntent = new Intent();
                     fIntent.putExtra(FINISH_TELL,tellList.get(position));
                     setResult(FINISH_CODE,fIntent);
                     finish();
                 }
+            }
+        });
+        removeTellModel = ViewModelProviders.of(TellListActivity.this).get(RemoveTellModel.class);
+        removeTellModel.getCurrentData(TellListActivity.this).observe(this, new Observer<SaveOrderEntity>() {
+            @Override
+            public void onChanged(@Nullable SaveOrderEntity saveOrderEntity) {
             }
         });
 
@@ -269,16 +279,32 @@ public class TellListActivity extends BaseActivity implements Toolbar.OnMenuItem
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_tell, menu);
-
         return true;
     }
     @Override
     public boolean onMenuItemClick(MenuItem menuItem) {
         switch (menuItem.getItemId()) {
             case R.id.action_add:
+                Intent eIntent = new Intent(TellListActivity.this,AddTellActivity.class);
+                eIntent.putExtra(AddTellActivity.TELL_TYPE,mTellType);
+                eIntent.putExtra(AddTellActivity.TELL_STATUS,AddTellActivity.TELL_STATUS_ADD);
+                startActivityForResult(eIntent,1);
                 break;
-
         }
         return true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == AddTellActivity.FINISH_RESH_CODE){
+            swipeRefreshLayout.setRefreshing(true);
+            page = 1;
+            tellListModel.loadTellList(mRequestClient
+                    ,String.valueOf(page)
+                    , String.valueOf(Constance.ORDER_First_NUM)
+                    ,queryStatus
+                    ,etSearch.getText().toString().trim());
+        }
     }
 }

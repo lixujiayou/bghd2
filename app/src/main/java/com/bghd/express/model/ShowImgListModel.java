@@ -3,23 +3,18 @@ package com.bghd.express.model;
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
-import android.util.Log;
 
 import com.bghd.express.R;
 import com.bghd.express.core.Constance;
 import com.bghd.express.core.MallRequest;
-import com.bghd.express.entiy.AdressEntity;
+import com.bghd.express.entiy.ShowImgEntity;
 import com.bghd.express.entiy.TellEntity;
 import com.bghd.express.utils.base.BaseViewModel;
-import com.bghd.express.utils.pinyin.CharacterParser;
-import com.bghd.express.utils.pinyin.PinyinComparator;
 import com.bghd.express.utils.tools.SPUtil;
 import com.bghd.express.utils.tools.ToastUtil;
 import com.bghd.express.utils.tools.ToolUtil;
 import com.cazaea.sweetalert.SweetAlertDialog;
 
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Observer;
@@ -32,19 +27,19 @@ import io.reactivex.schedulers.Schedulers;
  * @author lixu
  */
 
-public class TellListModel extends BaseViewModel {
+public class ShowImgListModel extends BaseViewModel {
 
 
 
-    public TellListModel(Application application) {
+    public ShowImgListModel(Application application) {
         super(application);
     }
 
-    private MutableLiveData<List<TellEntity.DateBean>> roundSiteList;
+    private MutableLiveData<List<ShowImgEntity.DataBean>> roundSiteList;
     private Context mContext;
 
 
-    public MutableLiveData<List<TellEntity.DateBean>> getCurrentData(Context context) {
+    public MutableLiveData<List<ShowImgEntity.DataBean>> getCurrentData(Context context) {
         this.mContext = context;
         if (roundSiteList == null) {
             roundSiteList = new MutableLiveData<>();
@@ -57,32 +52,27 @@ public class TellListModel extends BaseViewModel {
      *
      * @param mRequest
      */
-    public void loadTellList(MallRequest mRequest,String page,String size,String type, String truename) {
-        //showProgressDialog(mContext, "初始化数据...");
-        SPUtil sp = new SPUtil(mContext,SPUtil.USER);
-        String uId = sp.getString(SPUtil.USER_UID,"");
-        mRequest.getTellList(page,size,uId,type,truename)
+    public void getImgList(MallRequest mRequest) {
+        mRequest.getShowImgList("")
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<TellEntity>() {
+                .subscribe(new Observer<ShowImgEntity>() {
                     @Override
                     public void onSubscribe(Disposable d) {
                     }
 
                     @Override
-                    public void onNext(TellEntity roundSiteEntity) {
+                    public void onNext(ShowImgEntity roundSiteEntity) {
                         //dismissProgressDialog();
                         if (roundSiteList == null) {
                             roundSiteList = new MutableLiveData<>();
                         }
                         if (roundSiteEntity.getStatus() == Constance.REQUEST_SUCCESS_CODE) {
-                            if (!ToolUtil.isEmpty(roundSiteEntity.getDate())) {
-
-                                roundSiteList.postValue(roundSiteEntity.getDate());
-
+                            if (!ToolUtil.isEmpty(roundSiteEntity.getData())) {
+                                roundSiteList.postValue(roundSiteEntity.getData());
                             } else {
                                 onCallBackListener.onErro();
-                                ToastUtil.showToast(mContext, "未初始化到数据", ToastUtil.TOAST_TYPE_WARNING);
+                                ToastUtil.showToast(mContext, "轮播图无数据", ToastUtil.TOAST_TYPE_WARNING);
                             }
                         } else {
                             onCallBackListener.onErro();

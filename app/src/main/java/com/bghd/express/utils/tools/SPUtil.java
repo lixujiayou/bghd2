@@ -15,6 +15,7 @@ public class SPUtil {
     public static String USER_PHONE = "user_phone";
     public static String USER_PWD = "user_pwd";
     public static String USER_UID = "user_uid";
+    public static String USER_RIJIE = "user_rijie";
 
     public static String USER_TOKEN = "user_token";
 

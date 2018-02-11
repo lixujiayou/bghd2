@@ -13,6 +13,7 @@ public class SaveOrderEntity {
      */
 
     private int status;
+    private String date;
     private String info;
 
     public int getStatus() {
@@ -21,6 +22,14 @@ public class SaveOrderEntity {
 
     public void setStatus(int status) {
         this.status = status;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 
     public String getInfo() {

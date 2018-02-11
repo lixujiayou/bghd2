@@ -77,6 +77,27 @@ public class TellEntity {
         private String create_time;
         private String address_id;
 
+        @Override
+        public String toString() {
+            return "DateBean{" +
+                    "id='" + id + '\'' +
+                    ", type='" + type + '\'' +
+                    ", uid='" + uid + '\'' +
+                    ", nickname='" + nickname + '\'' +
+                    ", truename='" + truename + '\'' +
+                    ", card=" + card +
+                    ", mobile='" + mobile + '\'' +
+                    ", country='" + country + '\'' +
+                    ", province='" + province + '\'' +
+                    ", city='" + city + '\'' +
+                    ", district='" + district + '\'' +
+                    ", address='" + address + '\'' +
+                    ", map=" + map +
+                    ", create_time='" + create_time + '\'' +
+                    ", address_id='" + address_id + '\'' +
+                    '}';
+        }
+
         public String getId() {
             return id;
         }

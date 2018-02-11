@@ -3,24 +3,15 @@ package com.bghd.express.model;
 import android.app.Application;
 import android.arch.lifecycle.MutableLiveData;
 import android.content.Context;
-import android.util.Log;
 
 import com.bghd.express.R;
 import com.bghd.express.core.Constance;
 import com.bghd.express.core.MallRequest;
-import com.bghd.express.entiy.AdressEntity;
-import com.bghd.express.entiy.TellEntity;
+import com.bghd.express.entiy.SaveOrderEntity;
 import com.bghd.express.utils.base.BaseViewModel;
-import com.bghd.express.utils.pinyin.CharacterParser;
-import com.bghd.express.utils.pinyin.PinyinComparator;
 import com.bghd.express.utils.tools.SPUtil;
 import com.bghd.express.utils.tools.ToastUtil;
-import com.bghd.express.utils.tools.ToolUtil;
 import com.cazaea.sweetalert.SweetAlertDialog;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -32,19 +23,19 @@ import io.reactivex.schedulers.Schedulers;
  * @author lixu
  */
 
-public class TellListModel extends BaseViewModel {
+public class RemoveTellModel extends BaseViewModel {
 
 
 
-    public TellListModel(Application application) {
+    public RemoveTellModel(Application application) {
         super(application);
     }
 
-    private MutableLiveData<List<TellEntity.DateBean>> roundSiteList;
+    private MutableLiveData<SaveOrderEntity> roundSiteList;
     private Context mContext;
 
 
-    public MutableLiveData<List<TellEntity.DateBean>> getCurrentData(Context context) {
+    public MutableLiveData<SaveOrderEntity> getCurrentData(Context context) {
         this.mContext = context;
         if (roundSiteList == null) {
             roundSiteList = new MutableLiveData<>();
@@ -56,34 +47,33 @@ public class TellListModel extends BaseViewModel {
     /**
      *
      * @param mRequest
+     * isShowDialog true:show  false:no
      */
-    public void loadTellList(MallRequest mRequest,String page,String size,String type, String truename) {
-        //showProgressDialog(mContext, "初始化数据...");
-        SPUtil sp = new SPUtil(mContext,SPUtil.USER);
-        String uId = sp.getString(SPUtil.USER_UID,"");
-        mRequest.getTellList(page,size,uId,type,truename)
+    public void removeTell(MallRequest mRequest, String id, final boolean isShowDialog) {
+        if(isShowDialog) {
+            showProgressDialog(mContext, "正在删除...");
+        }
+        mRequest.removeTell(id)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Observer<TellEntity>() {
+                .subscribe(new Observer<SaveOrderEntity>() {
                     @Override
                     public void onSubscribe(Disposable d) {
                     }
 
                     @Override
-                    public void onNext(TellEntity roundSiteEntity) {
+                    public void onNext(SaveOrderEntity roundSiteEntity) {
                         //dismissProgressDialog();
+                        if(isShowDialog) {
+                            dismissProgressDialog();
+                        }
                         if (roundSiteList == null) {
                             roundSiteList = new MutableLiveData<>();
                         }
                         if (roundSiteEntity.getStatus() == Constance.REQUEST_SUCCESS_CODE) {
-                            if (!ToolUtil.isEmpty(roundSiteEntity.getDate())) {
 
-                                roundSiteList.postValue(roundSiteEntity.getDate());
+                            roundSiteList.postValue(roundSiteEntity);
 
-                            } else {
-                                onCallBackListener.onErro();
-                                ToastUtil.showToast(mContext, "未初始化到数据", ToastUtil.TOAST_TYPE_WARNING);
-                            }
                         } else {
                             onCallBackListener.onErro();
                             ToastUtil.showToast(mContext, roundSiteEntity.getInfo(), ToastUtil.TOAST_TYPE_ERRO);
@@ -93,7 +83,9 @@ public class TellListModel extends BaseViewModel {
 
                     @Override
                     public void onError(Throwable e) {
-                        //dismissProgressDialog();
+                        if(isShowDialog) {
+                            dismissProgressDialog();
+                        }
                         onCallBackListener.onErro();
                         String strMsg = Constance.getMsgByException(e);
                         ToastUtil.showToast(mContext, strMsg, ToastUtil.TOAST_TYPE_ERRO);

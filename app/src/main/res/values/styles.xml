@@ -66,5 +66,7 @@
         <item name="android:paddingBottom">4dp</item>
 
     </style>
-
+    <style name="StartTheme" parent="AppBaseTheme">
+        <item name="android:windowBackground">@drawable/m_splash</item>
+    </style>
 </resources>

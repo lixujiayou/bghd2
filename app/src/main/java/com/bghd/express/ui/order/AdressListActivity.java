@@ -187,7 +187,7 @@ public class AdressListActivity extends BaseActivity implements Toolbar.OnMenuIt
         if(requestCode == 0 && resultCode == FINISH_CODE && data != null){
             setResult(FINISH_CODE,data);
             finish();
-        }else if(requestCode == FINISH_CODE_CANCLE){
+        }else if(resultCode == FINISH_CODE_CANCLE){
             finish();
         }
     }

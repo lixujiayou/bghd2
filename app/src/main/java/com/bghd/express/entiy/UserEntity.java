@@ -12,6 +12,7 @@ public class UserEntity {
      */
 
     private int status;
+    private int rijie;
     private DataBean data;
     private String info;
 
@@ -37,6 +38,14 @@ public class UserEntity {
 
     public void setInfo(String info) {
         this.info = info;
+    }
+
+    public int getRijie() {
+        return rijie;
+    }
+
+    public void setRijie(int rijie) {
+        this.rijie = rijie;
     }
 
     public static class DataBean {

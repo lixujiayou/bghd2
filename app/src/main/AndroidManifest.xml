@@ -33,7 +33,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppBaseTheme">
-        <activity android:name=".ui.LoginActivity">
+        <activity android:name=".ui.SplashActivity"
+            android:theme="@style/StartTheme"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -41,7 +43,12 @@
             </intent-filter>
         </activity>
 
-
+        <!--下单-->
+        <activity android:name=".ui.LoginActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|stateUnchanged"
+            />
         <activity android:name=".ui.Main"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
@@ -75,7 +82,31 @@
             android:screenOrientation="portrait"
             android:windowSoftInputMode="stateHidden|stateUnchanged"
             />
+        <!--新增、编辑、删除通讯录-->
+        <activity android:name=".ui.mine.tell.AddTellActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="stateHidden|stateUnchanged"
+            />
 
+        <!--关于打印机-->
+        <activity android:name=".ui.mine.print.PrintAboutActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"
+            />
+
+        <!--图片查看-->
+        <activity
+            android:name=".ui.ImageLookActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait" />
+
+
+
+        <!--Image Selector Entry-->
+        <activity
+            android:configChanges="orientation|screenSize"
+            android:name="me.nereo.multi_image_selector.MultiImageSelectorActivity" />
 
         <!--Zxing二维码相关-->
         <activity android:name=".utils.zxing.activity.CaptureActivity"

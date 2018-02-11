@@ -7,6 +7,9 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -17,14 +20,21 @@ import android.widget.TextView;
 
 import com.bghd.express.R;
 import com.bghd.express.adapter.GlideImageLoader;
+import com.bghd.express.adapter.MyImgAdapter;
 import com.bghd.express.entiy.SaveOrderEntity;
+import com.bghd.express.entiy.ShowImgEntity;
 import com.bghd.express.entiy.TellEntity;
+import com.bghd.express.model.ImageFactoryModel;
 import com.bghd.express.model.SaveOrderModel;
+import com.bghd.express.model.ShowImgListModel;
+import com.bghd.express.ui.ImageLookActivity;
+import com.bghd.express.ui.mine.tell.AddTellActivity;
 import com.bghd.express.ui.mine.tell.TellListActivity;
 import com.bghd.express.utils.base.BaseActivity;
 import com.bghd.express.utils.base.DeletableEditText;
 import com.bghd.express.utils.tools.StringUtils;
 import com.bghd.express.utils.tools.ToastUtil;
+import com.bghd.express.utils.tools.ToolUtil;
 import com.bghd.express.utils.zxing.activity.CaptureActivity;
 import com.cazaea.sweetalert.SweetAlertDialog;
 import com.youth.banner.Banner;
@@ -34,6 +44,9 @@ import org.greenrobot.eventbus.EventBus;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import me.nereo.multi_image_selector.MultiImageSelector;
+import me.nereo.multi_image_selector.MultiImageSelectorActivity;
 
 /**
  * Created by lixu on 2018/2/5.
@@ -96,6 +109,32 @@ public class PlaceOrderActivity extends BaseActivity {
     private LinearLayout llAutoOrderCode;
 
     private SaveOrderModel saveOrderModel;
+    private ShowImgListModel showImgListModel;
+
+
+    /**
+     * 多张图片相关
+     */
+    private int IMAGE_MAX = 2;
+    private final int MULTI_IMG = 130;
+    private ArrayList<String> mImageList = new ArrayList<>();
+    private MyImgAdapter imageAdapter;
+    private RecyclerView recyclerView;
+    private GridLayoutManager gridLayoutManager;
+    private LinearLayout llPic;
+    private ImageFactoryModel imageFactoryModel;
+    private boolean isSSelected = false;//寄件人
+
+    private final int MULTI_IMGA = 133;
+    private ArrayList<String> mImageListA = new ArrayList<>();
+    private MyImgAdapter imageAdapterA;
+    private RecyclerView recyclerViewA;
+    private GridLayoutManager gridLayoutManagerA;
+    private LinearLayout llPicA;
+    private ImageFactoryModel imageFactoryModelA;
+    private boolean isASelected = false;//收件人
+
+
 
 
     @Override
@@ -112,7 +151,10 @@ public class PlaceOrderActivity extends BaseActivity {
         tvSendPerson = findViewById(R.id.bt_send_person);
         llScan = findViewById(R.id.ll_scan);
         llAutoOrderCode = findViewById(R.id.ll_auto_order);
-
+        recyclerView = findViewById(R.id.recycler_img);
+        recyclerViewA = findViewById(R.id.recycler_a_img);
+        llPic = findViewById(R.id.ll_pic);
+        llPicA = findViewById(R.id.ll_a_pic);
         etOrderCode = findViewById(R.id.et_order_code);
 
         llSave = findViewById(R.id.ll_meter_save);
@@ -137,14 +179,6 @@ public class PlaceOrderActivity extends BaseActivity {
         llScan.setOnClickListener(this);
         llSave.setOnClickListener(this);
 
-        imageList.add("http://bmob-cdn-9637.b0.upaiyun.com/2017/11/13/82486396404ad7dd808ad45414e3a040.png");
-        imageList.add("http://bmob-cdn-9637.b0.upaiyun.com/2017/11/13/f4a08ce240b28285805aff5d2a89865a.jpg");
-        imageList.add("http://bmob-cdn-9637.b0.upaiyun.com/2017/11/13/54f587bb404ce43880842163818bb812.jpg");
-
-        strList.add("一位传道人服侍感悟：反思侍奉");
-        strList.add("反省自己的服侍");
-        strList.add("基督徒的生活应该是一种常常默想的生活");
-        //   initChenJin();
         saveOrderModel = ViewModelProviders.of(PlaceOrderActivity.this).get(SaveOrderModel.class);
         saveOrderModel.getCurrentData(PlaceOrderActivity.this).observe(this, new Observer<SaveOrderEntity>() {
             @Override
@@ -155,7 +189,144 @@ public class PlaceOrderActivity extends BaseActivity {
         saveOrderModel.setOnErroCallback(new SaveOrderModel.OnErroListener() {
             @Override
             public void onErro() {
-                // showFaildDialog(PlaceOrderActivity.this,"");
+            }
+        });
+
+
+
+
+        showImgListModel = ViewModelProviders.of(PlaceOrderActivity.this).get(ShowImgListModel.class);
+        showImgListModel.getCurrentData(PlaceOrderActivity.this).observe(this, new Observer<List<ShowImgEntity.DataBean>>() {
+            @Override
+            public void onChanged(@Nullable List<ShowImgEntity.DataBean> dataBeans) {
+                imageList.clear();
+                strList.clear();
+                Log.d("qqqqqq","图片个数"+dataBeans.size());
+                for(ShowImgEntity.DataBean img: dataBeans){
+                    imageList.add(img.getImg());
+                  //  imageList.add("http://bmob-cdn-9637.b0.upaiyun.com/2017/11/13/82486396404ad7dd808ad45414e3a040.png");
+                    strList.add(img.getName());
+                }
+                //banner.update(imageList,strList);
+                initBanner();
+            }
+        });
+        showImgListModel.getImgList(mRequestClient);
+
+
+
+        imageAdapter = new MyImgAdapter(PlaceOrderActivity.this, mImageList);
+        gridLayoutManager = new GridLayoutManager(PlaceOrderActivity.this, 3);
+        recyclerView.setLayoutManager(gridLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setAdapter(imageAdapter);
+        imageAdapter.setOnItemClickListener(new MyImgAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent picIntent = new Intent(PlaceOrderActivity.this, ImageLookActivity.class);
+                picIntent.putExtra(ImageLookActivity.IMAGE_INTENT, mImageList.get(position));
+                startActivity(picIntent);
+            }
+
+            @Override
+            public void onAddClick(View view, int position) {
+                if (ToolUtil.isEmpty(mImageList) || mImageList.size() < IMAGE_MAX) {
+                    startCameras();
+                } else {
+                    ToastUtil.showToast(PlaceOrderActivity.this, "图片张数上限,请删除部分照片后重试", ToastUtil.TOAST_TYPE_WARNING);
+                }
+            }
+
+            @Override
+            public void onDeleteClick(View view, int position) {
+                showSelectDialog(position);
+            }
+        });
+
+
+
+
+        imageFactoryModel = new ImageFactoryModel(PlaceOrderActivity.this);
+        imageFactoryModel.setOnChangeCallback(new ImageFactoryModel.OnErroListener() {
+            @Override
+            public void onSuccess(List<String> imgList) {
+                saveOrderModel.saveOrder(mRequestClient
+                        , mSendAdressId
+                        , mAccpetAdressId
+                        , etSName.getText().toString().trim()
+                        , etSPHone.getText().toString().trim()
+                        , etSAdressInfo.getText().toString().trim()
+                        , etAName.getText().toString().trim()
+                        , etAPHone.getText().toString().trim()
+                        , etAAdressInfo.getText().toString().trim()
+                        , etOrderPrice.getText().toString().trim()
+                        , etWeight.getText().toString().trim()
+                        , etOrderCode.getText().toString().trim());
+            }
+
+            @Override
+            public void onErro(String erroMsg) {
+                ToastUtil.showToast(PlaceOrderActivity.this,erroMsg,ToastUtil.TOAST_TYPE_ERRO);
+            }
+        });
+
+
+        imageAdapterA = new MyImgAdapter(PlaceOrderActivity.this, mImageListA);
+        gridLayoutManagerA = new GridLayoutManager(PlaceOrderActivity.this, 3);
+        recyclerViewA.setLayoutManager(gridLayoutManagerA);
+        recyclerViewA.setItemAnimator(new DefaultItemAnimator());
+        recyclerViewA.setHasFixedSize(true);
+        recyclerViewA.setAdapter(imageAdapterA);
+        imageAdapterA.setOnItemClickListener(new MyImgAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                Intent picIntent = new Intent(PlaceOrderActivity.this, ImageLookActivity.class);
+                picIntent.putExtra(ImageLookActivity.IMAGE_INTENT, mImageList.get(position));
+                startActivity(picIntent);
+            }
+
+            @Override
+            public void onAddClick(View view, int position) {
+                if (ToolUtil.isEmpty(mImageListA) || mImageListA.size() < IMAGE_MAX) {
+                    startCamerasA();
+                } else {
+                    ToastUtil.showToast(PlaceOrderActivity.this, "图片张数上限,请删除部分照片后重试", ToastUtil.TOAST_TYPE_WARNING);
+                }
+            }
+
+            @Override
+            public void onDeleteClick(View view, int position) {
+                showSelectDialog(position);
+            }
+        });
+
+
+        imageFactoryModelA = new ImageFactoryModel(PlaceOrderActivity.this);
+        imageFactoryModelA.setOnChangeCallback(new ImageFactoryModel.OnErroListener() {
+            @Override
+            public void onSuccess(List<String> imgList) {
+                if(!isASelected && isSSelected) {
+                    saveOrderModel.saveOrder(mRequestClient
+                            , mSendAdressId
+                            , mAccpetAdressId
+                            , etSName.getText().toString().trim()
+                            , etSPHone.getText().toString().trim()
+                            , etSAdressInfo.getText().toString().trim()
+                            , etAName.getText().toString().trim()
+                            , etAPHone.getText().toString().trim()
+                            , etAAdressInfo.getText().toString().trim()
+                            , etOrderPrice.getText().toString().trim()
+                            , etWeight.getText().toString().trim()
+                            , etOrderCode.getText().toString().trim());
+                }else{
+                    imageFactoryModel.compressImg(mImageList);
+                }
+            }
+
+            @Override
+            public void onErro(String erroMsg) {
+                ToastUtil.showToast(PlaceOrderActivity.this,erroMsg,ToastUtil.TOAST_TYPE_ERRO);
             }
         });
     }
@@ -167,26 +338,6 @@ public class PlaceOrderActivity extends BaseActivity {
         if (saveWay.equals(SAVE_AUTO)) {
             llAutoOrderCode.setVisibility(View.GONE);
         }
-
-
-        //设置banner样式
-        banner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR_TITLE);
-        //设置图片加载器
-        banner.setImageLoader(new GlideImageLoader());
-        //设置图片集合
-        banner.setImages(imageList);
-        //设置banner动画效果
-        // banner.setBannerAnimation(Transformer.DepthPage);
-        //设置标题集合（当banner样式有显示title时）
-        banner.setBannerTitles(strList);
-        //设置自动轮播，默认为true
-        banner.isAutoPlay(true);
-        //设置轮播时间
-        banner.setDelayTime(3500);
-        //设置指示器位置（当banner模式中有指示器时）
-        banner.setIndicatorGravity(BannerConfig.RIGHT);
-        //banner设置方法全部调用完毕时最后调用
-        banner.start();
     }
 
     @Override
@@ -225,23 +376,56 @@ public class PlaceOrderActivity extends BaseActivity {
             //提交订单
             case R.id.ll_meter_save:
                 if (canSave()) {
-                    saveOrderModel.saveOrder(mRequestClient
-                            , mSendAdressId
-                            , mAccpetAdressId
-                            , etSName.getText().toString().trim()
-                            , etSPHone.getText().toString().trim()
-                            , etSAdressInfo.getText().toString().trim()
-                            , etAName.getText().toString().trim()
-                            , etAPHone.getText().toString().trim()
-                            , etAAdressInfo.getText().toString().trim()
-                            , etOrderPrice.getText().toString().trim()
-                            , etWeight.getText().toString().trim()
-                            , etOrderCode.getText().toString().trim());
+                    if(isASelected && isASelected) {
+                        imageFactoryModel.compressImg(mImageList);
+                    }else if(!isASelected && isSSelected){
+                        imageFactoryModelA.compressImg(mImageListA);
+                    }else if(isASelected && !isSSelected){
+                        imageFactoryModel.compressImg(mImageList);
+                    }else{
+                        saveOrderModel.saveOrder(mRequestClient
+                                , mSendAdressId
+                                , mAccpetAdressId
+                                , etSName.getText().toString().trim()
+                                , etSPHone.getText().toString().trim()
+                                , etSAdressInfo.getText().toString().trim()
+                                , etAName.getText().toString().trim()
+                                , etAPHone.getText().toString().trim()
+                                , etAAdressInfo.getText().toString().trim()
+                                , etOrderPrice.getText().toString().trim()
+                                , etWeight.getText().toString().trim()
+                                , etOrderCode.getText().toString().trim());
+                    }
                 }
                 break;
 
         }
     }
+
+
+
+    private void initBanner(){
+
+        //设置banner样式
+        banner.setBannerStyle(BannerConfig.CIRCLE_INDICATOR_TITLE);
+        //设置图片加载器
+        banner.setImageLoader(new GlideImageLoader());
+        //设置图片集合
+        banner.setImages(imageList);
+        //设置banner动画效果
+        // banner.setBannerAnimation(Transformer.DepthPage);
+        //设置标题集合（当banner样式有显示title时）
+        banner.setBannerTitles(strList);
+        //设置自动轮播，默认为true
+        banner.isAutoPlay(true);
+        //设置轮播时间
+        banner.setDelayTime(5500);
+        //设置指示器位置（当banner模式中有指示器时）
+        banner.setIndicatorGravity(BannerConfig.RIGHT);
+        //banner设置方法全部调用完毕时最后调用
+        banner.start();
+    }
+
 
     private boolean canSave() {
         if (saveWay.equals(SAVE_SCAN)) {
@@ -280,7 +464,16 @@ public class PlaceOrderActivity extends BaseActivity {
         } else if (isEmptyByEditText(etSAdressInfo)) {
             ToastUtil.showToast(PlaceOrderActivity.this, "请填写寄件人详细地址", ToastUtil.TOAST_TYPE_WARNING);
             return false;
+        }else if(!isASelected && ToolUtil.isEmpty(mImageListA)){
+            ToastUtil.showToast(PlaceOrderActivity.this, "请选择收件人身份证照片", ToastUtil.TOAST_TYPE_WARNING);
+            return false;
+        }else if(!isSSelected && ToolUtil.isEmpty(mImageList)){
+            ToastUtil.showToast(PlaceOrderActivity.this, "请选择寄件人身份证照片", ToastUtil.TOAST_TYPE_WARNING);
+            return false;
         }
+
+
+
 
         return true;
     }
@@ -312,7 +505,7 @@ public class PlaceOrderActivity extends BaseActivity {
                         if (StringUtils.isEmpty(adressTest)) {
                             adressTest = str;
                         } else {
-                            adressTest = adressTest + "," + str;
+                            adressTest = adressTest + str;
                         }
                     }
                     tvAcceptAdress.setText(adressTest);
@@ -327,7 +520,7 @@ public class PlaceOrderActivity extends BaseActivity {
                         if (StringUtils.isEmpty(adressTest)) {
                             adressTest = str;
                         } else {
-                            adressTest = adressTest + "," + str;
+                            adressTest = adressTest + str;
                         }
                     }
                     tvSendAdress.setText(adressTest);
@@ -335,6 +528,8 @@ public class PlaceOrderActivity extends BaseActivity {
                 }
                 //收件人
             } else if (requestCode == 2) {
+                isASelected = true;
+                llPicA.setVisibility(View.GONE);
                 if (resultCode == TellListActivity.FINISH_CODE) {
 
                     tellAccpet = (TellEntity.DateBean) data.getSerializableExtra(TellListActivity.FINISH_TELL);
@@ -359,6 +554,8 @@ public class PlaceOrderActivity extends BaseActivity {
                 }
                 //寄件人
             } else if (requestCode == 3) {
+                isSSelected = true;
+                llPic.setVisibility(View.GONE);
                 if (resultCode == TellListActivity.FINISH_CODE) {
                     sendAccpet = (TellEntity.DateBean) data.getSerializableExtra(TellListActivity.FINISH_TELL);
                     if (!StringUtils.isEmpty(sendAccpet.getTruename())) {
@@ -413,6 +610,23 @@ public class PlaceOrderActivity extends BaseActivity {
                     }
                 }
             }
+
+            if (resultCode == RESULT_OK && requestCode == MULTI_IMG) {
+                ArrayList<String> path = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
+                mImageList.clear();
+                mImageList.addAll(path);
+                imageAdapter.notifyDataSetChanged();
+
+            }else if(resultCode == RESULT_OK && requestCode == MULTI_IMGA){
+                ArrayList<String> path = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
+                mImageListA.clear();
+                mImageListA.addAll(path);
+                imageAdapterA.notifyDataSetChanged();
+            }
+
+
+
+
         }
     }
 
@@ -464,5 +678,48 @@ public class PlaceOrderActivity extends BaseActivity {
 
         } catch (Exception e) {
         }
+    }
+    private void startCameras() {
+        MultiImageSelector.create()
+                .showCamera(true) // 是否显示相机. 默认为显示
+                .count(2) // 最大选择图片数量, 默认为9. 只有在选择模式为多选时有效
+                //.single() // 单选模式
+                .multi() // 多选模式, 默认模式;
+                .origin(mImageList)
+                .start(PlaceOrderActivity.this, MULTI_IMG);
+    }
+private void startCamerasA() {
+        MultiImageSelector.create()
+                .showCamera(true) // 是否显示相机. 默认为显示
+                .count(2) // 最大选择图片数量, 默认为9. 只有在选择模式为多选时有效
+                //.single() // 单选模式
+                .multi() // 多选模式, 默认模式;
+                .origin(mImageListA)
+                .start(PlaceOrderActivity.this, MULTI_IMGA);
+    }
+
+    private void showSelectDialog(final int pos) {
+        new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
+                .setTitleText("是否删除当前照片?")
+                // .setContentText("删除后无法恢复!")
+                .setConfirmText("是")
+                .setCancelText("取消")
+                .setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sDialog) {
+                        sDialog.dismissWithAnimation();
+                        if (!ToolUtil.isEmpty(mImageList)) {
+                            mImageList.remove(pos);
+                            imageAdapter.notifyDataSetChanged();
+                        }
+                    }
+                })
+                .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(SweetAlertDialog sweetAlertDialog) {
+                        sweetAlertDialog.dismissWithAnimation();
+                    }
+                })
+                .show();
     }
 }

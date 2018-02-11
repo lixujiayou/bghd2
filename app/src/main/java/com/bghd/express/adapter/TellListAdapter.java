@@ -44,7 +44,12 @@ public class TellListAdapter extends BaseItemDraggableAdapter<TellEntity.DateBea
         if(!StringUtils.isEmpty(item.getMobile())) {
             helper.setText(R.id.tv_item_send_user_phone, item.getMobile());
         }
-        if(!StringUtils.isEmpty(item.getCountry())) {
+        if(!StringUtils.isEmpty(item.getCountry())
+                && !StringUtils.isEmpty(item.getProvince())
+                && !StringUtils.isEmpty(item.getCity())
+                && !StringUtils.isEmpty(item.getDistrict())
+                && !StringUtils.isEmpty(item.getAddress())
+                ) {
             helper.setText(R.id.tv_item_send_user_adress, item.getCountry()
                     + item.getProvince()
                     + item.getCity()

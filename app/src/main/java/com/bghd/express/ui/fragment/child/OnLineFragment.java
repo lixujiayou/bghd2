@@ -41,9 +41,12 @@ public class OnLineFragment extends BaseFragment implements View.OnClickListener
     private OrderOnLineListModel orderListModel;
 
     private SwipeRefreshLayout swipeRefreshLayout;
-
+    private  View emptyView;
 
     private int currentPage = 1;
+    private boolean isFirstLoad = true;
+
+
     public OnLineFragment() {
     }
 
@@ -70,7 +73,7 @@ public class OnLineFragment extends BaseFragment implements View.OnClickListener
     public void initViews() {
         recyclerView = mView.findViewById(R.id.recycler);
         swipeRefreshLayout = mView.findViewById(R.id.swiperefresh);
-
+         emptyView = mInflater.inflate(R.layout.layout_empty_view,null);
 
         orderListAdapter = new OrderListAdapter(R.layout.layout_order,orderList);
         orderListAdapter.openLoadAnimation();//动画
@@ -95,8 +98,8 @@ public class OnLineFragment extends BaseFragment implements View.OnClickListener
 
             }
         },recyclerView);
-        View emptyView = mInflater.inflate(R.layout.layout_empty_view,null);
-        orderListAdapter.setEmptyView(emptyView);
+
+
         emptyView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -125,6 +128,11 @@ public class OnLineFragment extends BaseFragment implements View.OnClickListener
                 }else{
                     orderListAdapter.loadMoreEnd();
                 }
+
+                if(isFirstLoad) {
+                    orderListAdapter.setEmptyView(emptyView);
+                    isFirstLoad = false;
+                }
             }
         });
 
@@ -142,7 +150,10 @@ public class OnLineFragment extends BaseFragment implements View.OnClickListener
             @Override
             public void onErro(int page,int type) {
                 swipeRefreshLayout.setRefreshing(false);
-
+                if(isFirstLoad) {
+                    orderListAdapter.setEmptyView(emptyView);
+                    isFirstLoad = false;
+                }
                 if(page != 1 && type == 2) {
                     orderListAdapter.loadMoreFail();
                 }else if(page != 1 && type == 0){
