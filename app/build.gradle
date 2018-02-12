@@ -106,4 +106,5 @@ dependencies {
     //google ocr字体识别
     compile 'com.rmtheis:tess-two:7.0.0'
     implementation project(':library')
+    implementation files('libs/CPCLA300_V1.01.12.01PRO.jar')
 }

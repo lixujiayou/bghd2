@@ -259,6 +259,7 @@
                     android:gravity="right"
                     >
                     <Button
+                        android:id="@+id/bt_order_print"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:minHeight="30dp"

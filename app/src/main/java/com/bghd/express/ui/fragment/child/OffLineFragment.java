@@ -17,6 +17,7 @@ import com.bghd.express.entiy.OrderListEntity;
 import com.bghd.express.entiy.eventbean.MainEvent;
 import com.bghd.express.model.OrderOffLineListModel;
 import com.bghd.express.utils.base.BaseFragment;
+import com.bghd.express.utils.bluetooth.PrintUtil;
 import com.bghd.express.utils.tools.ToolUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
@@ -40,7 +41,7 @@ public class OffLineFragment extends BaseFragment implements View.OnClickListene
     private OrderOffLineListModel orderListModel;
 
     private SwipeRefreshLayout swipeRefreshLayout;
-
+    private View emptyView;
 
     private int currentPage = 1;
 
@@ -91,8 +92,8 @@ public class OffLineFragment extends BaseFragment implements View.OnClickListene
                         ,Constance.ORDER_First_NUM);
             }
         },recyclerView);
-        View emptyView = mInflater.inflate(R.layout.layout_empty_view,null);
-        orderListAdapter.setEmptyView(emptyView);
+         emptyView = mInflater.inflate(R.layout.layout_empty_view,null);
+
         emptyView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -100,6 +101,15 @@ public class OffLineFragment extends BaseFragment implements View.OnClickListene
                 orderListModel.loadMyWorkList(mRequestClient, Constance.REQUEST_ON_ORDER,1,Constance.ORDER_First_NUM);
             }
         });
+
+        orderListAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                PrintUtil.printTest3(mContext,orderList.get(position));
+            }
+        });
+
+
 
 
 
@@ -120,6 +130,7 @@ public class OffLineFragment extends BaseFragment implements View.OnClickListene
                     orderListAdapter.notifyDataSetChanged();
                 }else{
                     orderListAdapter.loadMoreEnd();
+                    orderListAdapter.setEmptyView(emptyView);
                 }
             }
         });
@@ -138,7 +149,7 @@ public class OffLineFragment extends BaseFragment implements View.OnClickListene
             @Override
             public void onErro(int page,int type) {
                 swipeRefreshLayout.setRefreshing(false);
-
+                orderListAdapter.setEmptyView(emptyView);
                 if(page != 1 && type == 2) {
                     orderListAdapter.loadMoreFail();
                 }else if(page != 1 && type == 0){
@@ -166,6 +177,5 @@ public class OffLineFragment extends BaseFragment implements View.OnClickListene
 
     @Override
     public void onClick(View view) {
-
     }
 }

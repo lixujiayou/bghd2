@@ -17,6 +17,7 @@ import com.bghd.express.entiy.OrderListEntity;
 import com.bghd.express.entiy.eventbean.MainEvent;
 import com.bghd.express.model.OrderOnLineListModel;
 import com.bghd.express.utils.base.BaseFragment;
+import com.bghd.express.utils.bluetooth.PrintUtil;
 import com.bghd.express.utils.tools.ToolUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
@@ -135,7 +136,12 @@ public class OnLineFragment extends BaseFragment implements View.OnClickListener
                 }
             }
         });
-
+        orderListAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
+            @Override
+            public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+                PrintUtil.printTest3(mContext,orderList.get(position));
+            }
+        });
 
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
