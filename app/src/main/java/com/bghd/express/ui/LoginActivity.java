@@ -12,6 +12,13 @@ import com.bghd.express.entiy.UserEntity;
 import com.bghd.express.model.LoginModel;
 import com.bghd.express.utils.base.BaseActivity;
 import com.bghd.express.utils.tools.SPUtil;
+import com.yanzhenjie.permission.AndPermission;
+import com.yanzhenjie.permission.Permission;
+import com.yanzhenjie.permission.PermissionListener;
+import com.yanzhenjie.permission.Rationale;
+import com.yanzhenjie.permission.RationaleListener;
+
+import java.util.List;
 
 /**
  * Created by lixu on 2018/2/6.
@@ -56,6 +63,7 @@ public class LoginActivity extends BaseActivity{
 
             }
         });
+        aboutPermission();
     }
 
     @Override
@@ -77,4 +85,52 @@ public class LoginActivity extends BaseActivity{
                 break;
         }
     }
+
+    private void aboutPermission(){
+        AndPermission.with(LoginActivity.this)
+                .requestCode(100)
+                .permission(Permission.CAMERA
+                        ,Permission.LOCATION
+                        ,Permission.STORAGE
+                        ,Permission.CALENDAR)
+                .rationale(new RationaleListener() {
+                    @Override
+                    public void showRequestPermissionRationale(int requestCode, Rationale rationale) {
+                        // 此对话框可以自定义，调用rationale.resume()就可以继续申请。
+                        AndPermission.rationaleDialog(LoginActivity.this, rationale).show();
+                    }
+                })
+                .callback(permissionListener)
+                .start();
+    }
+
+
+    private PermissionListener permissionListener = new PermissionListener() {
+        @Override
+        public void onSucceed(int requestCode, List<String> grantedPermissions) {
+            // 权限申请成功回调。
+
+            // 这里的requestCode就是申请时设置的requestCode。
+            // 和onActivityResult()的requestCode一样，用来区分多个不同的请求。
+            if(requestCode == 100) {
+                // TODO ...
+            }
+        }
+
+        @Override
+        public void onFailed(int requestCode, List<String> deniedPermissions) {
+            // 权限申请失败回调。
+            if(requestCode == 100) {
+                // 是否有不再提示并拒绝的权限。
+                if (AndPermission.hasAlwaysDeniedPermission(LoginActivity.this, deniedPermissions)) {
+                    // 第二种：用自定义的提示语。
+                    /*AndPermission.defaultSettingDialog(LoginActivity.this, 400)
+                            .setTitle("权限申请失败")
+                            .setMessage("您拒绝了我们必要的一些权限，无法正常使用抄表APP，请在设置中授权！")
+                            .setPositiveButton("好，去设置")
+                            .show();*/
+                }
+            }
+        }
+    };
 }

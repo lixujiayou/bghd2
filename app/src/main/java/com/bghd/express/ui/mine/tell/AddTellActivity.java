@@ -1,23 +1,33 @@
 package com.bghd.express.ui.mine.tell;
 
+import android.Manifest;
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.bghd.express.R;
@@ -32,23 +42,37 @@ import com.bghd.express.ui.ImageLookActivity;
 import com.bghd.express.ui.order.AdressListActivity;
 import com.bghd.express.utils.base.BaseActivity;
 import com.bghd.express.utils.base.DeletableEditText;
+import com.bghd.express.utils.tools.ImgUtils;
 import com.bghd.express.utils.tools.StringUtils;
 import com.bghd.express.utils.tools.ToastUtil;
 import com.bghd.express.utils.tools.ToolUtil;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.drawable.GlideDrawable;
+import com.bumptech.glide.request.Request;
+import com.bumptech.glide.request.animation.GlideAnimation;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.target.SizeReadyCallback;
+import com.bumptech.glide.request.target.Target;
 import com.cazaea.sweetalert.SweetAlertDialog;
+import com.googlecode.tesseract.android.TessBaseAPI;
+import com.oginotihiro.cropview.CropView;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
 import me.nereo.multi_image_selector.MultiImageSelector;
 import me.nereo.multi_image_selector.MultiImageSelectorActivity;
 
+import static com.bghd.express.utils.tools.SDUtils.assets2SD;
+
 /**
  * Created by lixu on 2018/2/11.
  */
 
 public class AddTellActivity extends BaseActivity implements Toolbar.OnMenuItemClickListener {
+    private String TAG = "AddTellActivity";
     public static final int FINISH_RESH_CODE = 199;//返回刷新
 
 
@@ -103,6 +127,46 @@ public class AddTellActivity extends BaseActivity implements Toolbar.OnMenuItemC
     private ImageFactoryModel imageFactoryModel;
 
 
+    /**
+     * 识别相关
+     */
+    private final int MULTI_IMG_DISCERN = 133;
+    private DeletableEditText etDiscern;
+    private LinearLayout llDiscern;
+    private CropView cropView;
+    private ScrollView scrollView;
+    private Button btDiscern;
+    private LinearLayout llEtDiscern;
+    private LinearLayout llDiscernTop;
+    /**
+     * TessBaseAPI初始化用到的第一个参数，是个目录。
+     */
+    private static final String DATAPATH = Environment.getExternalStorageDirectory().getAbsolutePath() + File.separator;
+    /**
+     * 在DATAPATH中新建这个目录，TessBaseAPI初始化要求必须有这个目录。
+     */
+    private static final String tessdata = DATAPATH + File.separator + "tessdata";
+    /**
+     * TessBaseAPI初始化测第二个参数，就是识别库的名字不要后缀名。
+     */
+    private static String DEFAULT_LANGUAGE = "chi_sim";
+    /**
+     * assets中的文件名
+     */
+    private static String DEFAULT_LANGUAGE_NAME = DEFAULT_LANGUAGE + ".traineddata";
+    /**
+     * 保存到SD卡中的完整文件名
+     */
+    private static String LANGUAGE_PATH = tessdata + File.separator + DEFAULT_LANGUAGE_NAME;
+
+    /**
+     * 权限请求值
+     */
+    private static final int PERMISSION_REQUEST_CODE = 0;
+
+    private static final int PICK_REQUEST_CODE = 10;
+
+
     @Override
     protected void initContentView(Bundle savedInstanceState) {
         setContentView(R.layout.activity_add_tell);
@@ -110,6 +174,8 @@ public class AddTellActivity extends BaseActivity implements Toolbar.OnMenuItemC
 
     @Override
     public void initViews() {
+        etDiscern = findViewById(R.id.et_discern);
+        llDiscern = findViewById(R.id.ll_discern);
         etName = findViewById(R.id.et_name);
         etPhone = findViewById(R.id.et_phone);
         tvAdress = findViewById(R.id.tv_adress);
@@ -117,9 +183,15 @@ public class AddTellActivity extends BaseActivity implements Toolbar.OnMenuItemC
         btSave = findViewById(R.id.ll_tell_save);
         recyclerView = findViewById(R.id.recycler_img);
         llPic = findViewById(R.id.ll_pic);
+        cropView = findViewById(R.id.iv_cropview);
+        scrollView = findViewById(R.id.scrollView);
+        btDiscern = findViewById(R.id.bt_discern);
+        llEtDiscern = findViewById(R.id.ll_et_discern);
+        llDiscernTop = findViewById(R.id.ll_discern_top);
         btSave.setOnClickListener(this);
         tvAdress.setOnClickListener(this);
-
+        btDiscern.setOnClickListener(this);
+        llDiscernTop.setOnClickListener(this);
 
 
         Intent gIntent = getIntent();
@@ -137,8 +209,7 @@ public class AddTellActivity extends BaseActivity implements Toolbar.OnMenuItemC
         cTellStatsu = gIntent.getExtras().getString(TELL_STATUS, "");
         if (cTellStatsu.equals(TELL_STATUS_EDIT)) {
             llPic.setVisibility(View.GONE);
-            setSupportActionBar(mToolbar);
-            mToolbar.setOnMenuItemClickListener(this);
+
             adressBean = (TellEntity.DateBean) gIntent.getSerializableExtra(ADRESS_INFO);
             initAdressData();
 
@@ -150,6 +221,26 @@ public class AddTellActivity extends BaseActivity implements Toolbar.OnMenuItemC
                 mSaveType = getuser;
             }
         }
+        setSupportActionBar(mToolbar);
+        mToolbar.setOnMenuItemClickListener(this);
+
+
+
+        //一个可以双指缩放移动的控件，解决滑动冲突
+        cropView.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_UP) {
+                    //允许ScrollView截断点击事件，ScrollView可滑动
+                    scrollView.requestDisallowInterceptTouchEvent(false);
+                } else {
+                    //不允许ScrollView截断点击事件，点击事件由子View处理
+                    scrollView.requestDisallowInterceptTouchEvent(true);
+                }
+                return false;
+            }
+        });
+
 
 
         imageAdapter = new MyImgAdapter(AddTellActivity.this, mImageList);
@@ -196,10 +287,25 @@ public class AddTellActivity extends BaseActivity implements Toolbar.OnMenuItemC
 
             @Override
             public void onErro(String erroMsg) {
-                ToastUtil.showToast(AddTellActivity.this,erroMsg,ToastUtil.TOAST_TYPE_ERRO);
+                ToastUtil.showToast(AddTellActivity.this, erroMsg, ToastUtil.TOAST_TYPE_ERRO);
             }
         });
 
+
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED ||
+                    checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
+                requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+            }
+        }
+
+        //Android6.0之前安装时就能复制，6.0之后要先请求权限，所以6.0以上的这个方法无用。
+//new Thread(new Runnable() {
+//    @Override
+//    public void run() {
+//        assets2SD(getApplicationContext(), LANGUAGE_PATH, DEFAULT_LANGUAGE_NAME);
+//    }
+//}).start();
     }
 
     @Override
@@ -284,6 +390,18 @@ public class AddTellActivity extends BaseActivity implements Toolbar.OnMenuItemC
                     }
                 }
                 break;
+            case R.id.bt_discern:
+                Bitmap bt = cropView.getOutput();
+                recognition(bt);
+                break;
+            case R.id.ll_discern_top:
+//                llEtDiscern.setVisibility(View.GONE);
+//                if(llDiscern.getVisibility() == View.GONE){
+//                    llDiscern.setVisibility(View.VISIBLE);
+//                }else{
+//                    llDiscern.setVisibility(View.GONE);
+//                }
+                break;
         }
     }
 
@@ -301,7 +419,7 @@ public class AddTellActivity extends BaseActivity implements Toolbar.OnMenuItemC
         } else if (isEmptyByEditText(etAdressInfo)) {
             ToastUtil.showToast(AddTellActivity.this, "请填写'详细地址'", ToastUtil.TOAST_TYPE_WARNING);
             return false;
-        }else if(ToolUtil.isEmpty(mImageList)){
+        } else if (ToolUtil.isEmpty(mImageList)) {
             ToastUtil.showToast(AddTellActivity.this, "请填写上传身份证照片", ToastUtil.TOAST_TYPE_WARNING);
             return false;
         }
@@ -359,6 +477,25 @@ public class AddTellActivity extends BaseActivity implements Toolbar.OnMenuItemC
                 mImageList.addAll(path);
                 imageAdapter.notifyDataSetChanged();
 
+            } else if (resultCode == RESULT_OK && requestCode == MULTI_IMG_DISCERN) {
+
+                final ArrayList<String> path = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
+                if (ToolUtil.isEmpty(path)) {
+                    return;
+                }
+                //recognition(BitmapFactory.decodeResource(getResources(), R.drawable.iv_test));
+//                BitmapFactory.Options options = new BitmapFactory.Options();
+//                options.inJustDecodeBounds = true;
+                Bitmap dBitmap = BitmapFactory.decodeFile(path.get(0), null);
+                //Uri uri= Uri.parse(path.get(0));
+                //Uri uri= Uri.parse("file:///content://com.miui.gallery.open/raw/%2Fstorage%2Femulated%2F0%2FDCIM%2FIMG_-2038920741.jpg");
+                //Log.d("qqqqq",uri.toString());
+                //cropView.of(uri).withAspect(2, 1).initialize(AddTellActivity.this);
+
+             //   llDiscern.setVisibility(View.VISIBLE);
+                recognition(dBitmap);
+
+
             }
 
         }
@@ -369,7 +506,11 @@ public class AddTellActivity extends BaseActivity implements Toolbar.OnMenuItemC
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
         getMenuInflater().inflate(R.menu.menu_tell_remove, menu);
+        if (!cTellStatsu.equals(TELL_STATUS_EDIT)) {
+            menu.findItem(R.id.action_remove).setVisible(false);
+        }
         return true;
     }
 
@@ -378,6 +519,10 @@ public class AddTellActivity extends BaseActivity implements Toolbar.OnMenuItemC
         switch (menuItem.getItemId()) {
             case R.id.action_remove:
                 removeTellDialog();
+                break;
+            case R.id.action_discern:
+                startCamerasForDiscern();
+                //recognition(BitmapFactory.decodeResource(getResources(), R.drawable.iv_test));
                 break;
 
         }
@@ -440,6 +585,16 @@ public class AddTellActivity extends BaseActivity implements Toolbar.OnMenuItemC
                 .start(AddTellActivity.this, MULTI_IMG);
     }
 
+    private void startCamerasForDiscern() {
+        MultiImageSelector.create()
+                .showCamera(true) // 是否显示相机. 默认为显示
+                //.count(2) // 最大选择图片数量, 默认为9. 只有在选择模式为多选时有效
+                .single() // 单选模式
+                //.multi() // 多选模式, 默认模式;
+                //.origin(mImageList)
+                .start(AddTellActivity.this, MULTI_IMG_DISCERN);
+    }
+
     private void showSelectDialog(final int pos) {
         new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
                 .setTitleText("是否删除当前照片?")
@@ -465,5 +620,142 @@ public class AddTellActivity extends BaseActivity implements Toolbar.OnMenuItemC
                 .show();
     }
 
+    public boolean checkTraineddataExists() {
+        File file = new File(LANGUAGE_PATH);
+        return file.exists();
+    }
+
+    /**
+     * 识别图像
+     *
+     */
+    private void recognition(final Bitmap resource) {
+        showProgressDialog(AddTellActivity.this, "正在识别...");
+//        final Bitmap bmp =  ImgUtils.getSmallBitmap(strBitmap);
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                try {
+//
+//                    String text = "";
+//                    if (!checkTraineddataExists()) {
+//                        Log.i(TAG, "run: " + LANGUAGE_PATH + "不存在，开始复制\r\n");
+//                        assets2SD(getApplicationContext(), LANGUAGE_PATH, DEFAULT_LANGUAGE_NAME);
+//                    }
+//
+//                    TessBaseAPI tessBaseAPI = new TessBaseAPI();
+//                    tessBaseAPI.init(DATAPATH, DEFAULT_LANGUAGE);
+//                    tessBaseAPI.setImage(bmp);
+//                    text = tessBaseAPI.getUTF8Text();
+//                    Log.i(TAG, "run: text " + text);
+//                    final String finalText = text;
+//                    final Bitmap finalBitmap = bmp;
+//                    runOnUiThread(new Runnable() {
+//                        @Override
+//                        public void run() {
+//                            dismissProgressDialog();
+//                            llDiscern.setVisibility(View.VISIBLE);
+//                            etDiscern.setText(finalText);
+//                            Log.d(TAG, "识别文字==" + finalText);
+//                            if(StringUtils.isEmpty(finalText)){
+//                                ToastUtil.showToast(AddTellActivity.this,"识别失败,请选择清晰度较高的图片",ToastUtil.TOAST_TYPE_WARNING);
+//                            }
+//                        }
+//                    });
+//                    tessBaseAPI.end();
+//
+//
+//                } catch (Exception e) {
+//                    Log.d("qqqqq", "识别异常" + e.getMessage());
+////                    ToastUtil.showToast(AddTellActivity.this,"识别异常"+e.getMessage(),ToastUtil.TOAST_TYPE_ERRO);
+//                    throw e;
+//                }
+//            }
+//
+//
+//        }).start();
+
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+
+                    String text = "";
+                    if (!checkTraineddataExists()) {
+                        Log.i(TAG, "run: " + LANGUAGE_PATH + "不存在，开始复制\r\n");
+                        assets2SD(getApplicationContext(), LANGUAGE_PATH, DEFAULT_LANGUAGE_NAME);
+                    }
+
+                    TessBaseAPI tessBaseAPI = new TessBaseAPI();
+                    tessBaseAPI.init(DATAPATH, DEFAULT_LANGUAGE);
+                    tessBaseAPI.setImage(resource);
+                    text = tessBaseAPI.getUTF8Text();
+                    Log.i(TAG, "run: text " + text);
+                    final String finalText = text;
+                    final Bitmap finalBitmap = resource;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            dismissProgressDialog();
+                            llDiscern.setVisibility(View.VISIBLE);
+                            //llEtDiscern.setVisibility(View.VISIBLE);
+                            etDiscern.setText(finalText);
+                            Log.d(TAG, "识别文字==" + finalText);
+                        }
+                    });
+                    tessBaseAPI.end();
+
+
+                } catch (Exception e) {
+                    Log.d("qqqqq", "识别异常" + e.getMessage());
+//                    ToastUtil.showToast(AddTellActivity.this,"识别异常"+e.getMessage(),ToastUtil.TOAST_TYPE_ERRO);
+                    throw e;
+                }
+            }
+
+
+        }).start();
+    }
+
+    /**
+     * 请求到权限后在这里复制识别库
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    assets2SD(getApplicationContext(), LANGUAGE_PATH, DEFAULT_LANGUAGE_NAME);
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private SweetAlertDialog pDialog;
+
+    public void showProgressDialog(Context mContext, String title) {
+        try {
+            pDialog = new SweetAlertDialog(mContext, SweetAlertDialog.PROGRESS_TYPE);
+            pDialog.getProgressHelper().setBarColor(R.color.colorPrimary);
+            pDialog.setTitleText(title);
+            pDialog.setContentText("图片越大,识别时间越长");
+            pDialog.setCancelable(false);
+            pDialog.show();
+        } catch (Exception e) {
+        }
+    }
+
+    public void dismissProgressDialog() {
+        if (pDialog != null) {
+            pDialog.dismiss();
+        }
+    }
 
 }

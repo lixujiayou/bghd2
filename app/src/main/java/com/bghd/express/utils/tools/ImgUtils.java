@@ -20,7 +20,7 @@ import java.util.List;
 
 public class ImgUtils {
     /**
-     * 根据路径获得突破并压缩返回bitmap用于显示
+     *
      *
      * @return
      */
@@ -30,7 +30,8 @@ public class ImgUtils {
         BitmapFactory.decodeFile(filePath, options);
 
         // Calculate inSampleSize
-        options.inSampleSize = calculateInSampleSize(options, 480, 800);
+        //options.inSampleSize = calculateInSampleSize(options, 480, 800);
+        //options.inSampleSize = calculateInSampleSize(options, 480, 800);
 
         // Decode bitmap with inSampleSize set
         options.inJustDecodeBounds = false;

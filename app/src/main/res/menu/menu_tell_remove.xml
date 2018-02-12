@@ -5,5 +5,12 @@
         android:title="删除"
         android:orderInCategory="90"
         android:icon="@drawable/icon_remove"
+        app:showAsAction="ifRoom"
+        />
+
+    <item android:id="@+id/action_discern"
+        android:title="文字识别"
+        android:orderInCategory="90"
+        android:icon="@drawable/icon_toolbar_discern"
         app:showAsAction="ifRoom" />
 </menu>

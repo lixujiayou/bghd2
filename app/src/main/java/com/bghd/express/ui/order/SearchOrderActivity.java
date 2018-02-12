@@ -1,10 +1,15 @@
 package com.bghd.express.ui.order;
 
+import android.arch.lifecycle.Observer;
+import android.arch.lifecycle.ViewModelProviders;
 import android.arch.persistence.room.Room;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -14,16 +19,22 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bghd.express.R;
+import com.bghd.express.adapter.OrderListAdapter;
 import com.bghd.express.adapter.SearchHistoryAdapter;
+import com.bghd.express.core.Constance;
+import com.bghd.express.entiy.OrderListEntity;
+import com.bghd.express.model.OrderOnLineListModel;
 import com.bghd.express.room_.AppDatabase;
 import com.bghd.express.room_.User;
 import com.bghd.express.utils.base.BaseActivity;
 import com.bghd.express.utils.tools.StringUtils;
 import com.bghd.express.utils.tools.ToastUtil;
 import com.bghd.express.utils.tools.ToolUtil;
+import com.cazaea.sweetalert.SweetAlertDialog;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
 import java.io.ByteArrayOutputStream;
@@ -65,6 +76,13 @@ public class SearchOrderActivity extends BaseActivity {
     private RecyclerView recyclerViewHistory;
     private ImageView ivCleanHistory;
 
+    private OrderOnLineListModel orderOnLineListModel;
+    private int currentPage = 1;
+    private RecyclerView recyclerView;
+    private OrderListAdapter orderListAdapter;
+    private LinearLayoutManager linearLayoutManager;
+    private List<OrderListEntity.DataBean> orderList = new ArrayList<>();
+    private LinearLayout llHistory;
 
     @Override
     protected void initContentView(Bundle savedInstanceState) {
@@ -77,6 +95,10 @@ public class SearchOrderActivity extends BaseActivity {
         ivCancle = findViewById(R.id.iv_cancle);
         etSearch = findViewById(R.id.et_search);
         ivCleanHistory = findViewById(R.id.iv_clean_history);
+        recyclerView = findViewById(R.id.recycler);
+        llHistory = findViewById(R.id.ll_history);
+
+
         ivCancle.setOnClickListener(this);
         ivCleanHistory.setOnClickListener(this);
         etSearch.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -85,7 +107,12 @@ public class SearchOrderActivity extends BaseActivity {
                 if (actionId == EditorInfo.IME_ACTION_SEARCH) {
                     String strs = etSearch.getText().toString().trim();
                     if (!StringUtils.isEmpty(strs)) {
+                        if(llHistory.getVisibility() != View.GONE){
+                            llHistory.setVisibility(View.GONE);
+                        }
                         addAHistoty(strs);
+                        showProgressDialog(SearchOrderActivity.this,"正在查询...");
+                        orderOnLineListModel.loadMyWorkList(mRequestClient,Constance.REQUEST_ON_ORDER,currentPage, Constance.ORDER_First_NUM);
                     } else {
                         ToastUtil.showToast(SearchOrderActivity.this, "请输入订单号", ToastUtil.TOAST_TYPE_NOMAL);
                     }
@@ -94,28 +121,38 @@ public class SearchOrderActivity extends BaseActivity {
             }
         });
 
-//        etSearch.addTextChangedListener(new TextWatcher() {
-//            @Override
-//            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//
-//            }
-//
-//            @Override
-//            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-//                if (StringUtils.isEmpty(etSearch.getText().toString().trim())) {
-//                    // queryOrDeleteAllHistoty(QUERY);
-//                }
-//
-//            }
-//
-//            @Override
-//            public void afterTextChanged(Editable editable) {
-//
-//            }
-//        });
+
+
+        orderOnLineListModel = ViewModelProviders.of(SearchOrderActivity.this).get(OrderOnLineListModel.class);
+        orderOnLineListModel.getCurrentData(SearchOrderActivity.this).observe(this, new Observer<List<OrderListEntity.DataBean>>() {
+            @Override
+            public void onChanged(@Nullable List<OrderListEntity.DataBean> dataBeans) {
+                dismissProgressDialog();
+                orderList.clear();
+                orderList.addAll(dataBeans);
+                searchHistoryAdapter.notifyDataSetChanged();
+            }
+        });
+        orderOnLineListModel.setOnErroCallback(new OrderOnLineListModel.OnErroListener() {
+            @Override
+            public void onErro(int page, int type) {
+                dismissProgressDialog();
+            }
+        });
+
 
         Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "database-name").build();
         db = Room.databaseBuilder(getApplicationContext(), AppDatabase.class, "database-name").build();
+
+
+        orderListAdapter = new OrderListAdapter(R.layout.layout_order,orderList);
+        orderListAdapter.openLoadAnimation();//动画
+        linearLayoutManager = new LinearLayoutManager(SearchOrderActivity.this);
+        recyclerView.setLayoutManager(linearLayoutManager);
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(orderListAdapter);
+
     }
 
     @Override
@@ -223,6 +260,23 @@ public class SearchOrderActivity extends BaseActivity {
                     }
                 });
     }
+    private SweetAlertDialog pDialog;
 
+    public void showProgressDialog(Context mContext, String title) {
+        try {
+            pDialog = new SweetAlertDialog(mContext, SweetAlertDialog.PROGRESS_TYPE);
+            pDialog.getProgressHelper().setBarColor(R.color.colorPrimary);
+            pDialog.setTitleText(title);
+            pDialog.setCancelable(false);
+            pDialog.show();
+        } catch (Exception e) {
+        }
+    }
+
+    public void dismissProgressDialog() {
+        if (pDialog != null) {
+            pDialog.dismiss();
+        }
+    }
 
 }

@@ -50,6 +50,7 @@ public class SplashActivity extends AppCompatActivity {
             }
             @Override
             public void onFinish() {
+               // Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                 Intent intent = new Intent(SplashActivity.this, LoginActivity.class);
                 startActivity(intent);
                 stopTimer();

@@ -2,11 +2,13 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
 
     <include layout="@layout/toolbar" />
 
     <ScrollView
+        android:id="@+id/scrollView"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -14,6 +16,123 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
+        <LinearLayout
+            android:id="@+id/ll_discern"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone"
+            >
+            <LinearLayout
+
+                android:id="@+id/ll_discern_top"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:background="@drawable/ripple_bg"
+                android:gravity="center_vertical"
+                android:minHeight="@dimen/height_item"
+                android:orientation="horizontal"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+
+                >
+
+                <View
+                    android:layout_width="4dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginBottom="7dp"
+                    android:layout_marginTop="7dp"
+                    android:background="@color/textcolor_yellow" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="7dp"
+                    android:text="识别信息"
+                    android:textColor="@color/textcolor_2"
+                    android:textSize="@dimen/textsize_16" />
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="7dp"
+                    android:text="(仅供参考和复制)"
+                    android:textColor="@color/textcolor_4"
+                    android:textSize="12sp" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:gravity="center_vertical"
+                    android:minHeight="@dimen/height_item"
+                    android:orientation="vertical"
+                    android:visibility="gone"
+                    >
+
+                    <Button
+                        android:id="@+id/bt_discern"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="right"
+                        android:background="@drawable/red_button_background"
+                        android:minHeight="30dp"
+                        android:minWidth="80dp"
+                        android:text="识别"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/textsize_16"
+                        />
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:background="@color/white"
+                android:orientation="vertical"
+                android:visibility="gone"
+                >
+                <com.oginotihiro.cropview.CropView
+                    android:id="@+id/iv_cropview"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    tools:layout_editor_absoluteX="151dp"
+                    tools:layout_editor_absoluteY="4dp" />
+                <ImageView
+                    android:id="@+id/iv_result"
+                    android:layout_width="match_parent"
+                    android:layout_height="200dp"
+                    android:scaleType="centerInside"
+                    android:visibility="gone"/>
+            </RelativeLayout>
+
+            <LinearLayout
+                android:id="@+id/ll_et_discern"
+                style="@style/item_place_order"
+                android:layout_marginTop="@dimen/line_px"
+                android:gravity="top"
+                android:visibility="visible"
+                >
+                <com.bghd.express.utils.base.DeletableEditText
+                    android:id="@+id/et_discern"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minLines="10"
+                    android:minHeight="@dimen/height_search"
+                    android:background="@drawable/searh_strokeshap_backround"
+                    android:padding="10dp"
+                    android:gravity="top"
+                    android:text=""
+                    />
+
+            </LinearLayout>
+
+        </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -63,7 +182,6 @@
                     android:layout_weight="3"
                     android:background="@color/white"
                     android:hint="@string/et_hint"
-                    android:inputType="numberDecimal|number"
                     android:lines="1"
                     android:minHeight="@dimen/height_search"
                     android:paddingLeft="6dp" />
@@ -245,6 +363,10 @@
                     android:textColor="@color/white"
                     android:textSize="@dimen/textsize_16" />
             </LinearLayout>
+
+
+
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
