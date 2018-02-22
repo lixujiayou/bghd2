@@ -72,8 +72,8 @@ public class OnLineFragment extends BaseFragment implements View.OnClickListener
 
     @Override
     public void initViews() {
-        recyclerView = mView.findViewById(R.id.recycler);
-        swipeRefreshLayout = mView.findViewById(R.id.swiperefresh);
+        recyclerView = (RecyclerView) mView.findViewById(R.id.recycler);
+        swipeRefreshLayout = (SwipeRefreshLayout) mView.findViewById(R.id.swiperefresh);
          emptyView = mInflater.inflate(R.layout.layout_empty_view,null);
 
         orderListAdapter = new OrderListAdapter(R.layout.layout_order,orderList);

@@ -2,7 +2,12 @@ package com.bghd.express.ui.fragment.child;
 
 import android.arch.lifecycle.Observer;
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
@@ -16,8 +21,12 @@ import com.bghd.express.core.Constance;
 import com.bghd.express.entiy.OrderListEntity;
 import com.bghd.express.entiy.eventbean.MainEvent;
 import com.bghd.express.model.OrderOffLineListModel;
+import com.bghd.express.ui.mine.print.Activity_DeviceList;
+import com.bghd.express.ui.mine.print.PrintAboutActivity;
 import com.bghd.express.utils.base.BaseFragment;
 import com.bghd.express.utils.bluetooth.PrintUtil;
+import com.bghd.express.utils.bluetooth.checkClick;
+import com.bghd.express.utils.tools.ToastUtil;
 import com.bghd.express.utils.tools.ToolUtil;
 import com.chad.library.adapter.base.BaseQuickAdapter;
 
@@ -26,6 +35,8 @@ import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import HPRTAndroidSDKA300.HPRTPrinterHelper;
 
 /**
  * Created by lixu on 2018/1/23.
@@ -105,7 +116,31 @@ public class OffLineFragment extends BaseFragment implements View.OnClickListene
         orderListAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
-                PrintUtil.printTest3(mContext,orderList.get(position));
+                if (!checkClick.isClickEvent()) return;
+
+                if (!HPRTPrinterHelper.IsOpened()) {
+                    if (Build.VERSION.SDK_INT >= 23) {
+                        //校验是否已具有模糊定位权限
+                        if (ContextCompat.checkSelfPermission(mContext,
+                                android.Manifest.permission.ACCESS_COARSE_LOCATION)
+                                != PackageManager.PERMISSION_GRANTED) {
+                            ActivityCompat.requestPermissions(OffLineFragment.this.getActivity(),
+                                    new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                                    100);
+                        } else {
+                            //具有权限
+                            Intent serverIntent = new Intent(mContext, Activity_DeviceList.class);
+                            startActivityForResult(serverIntent, HPRTPrinterHelper.ACTIVITY_CONNECT_BT);
+                            return;
+                        }
+                    } else {
+                        //系统不高于6.0直接执行
+                        Intent serverIntent = new Intent(mContext, Activity_DeviceList.class);
+                        startActivityForResult(serverIntent, HPRTPrinterHelper.ACTIVITY_CONNECT_BT);
+                    }
+                }else{
+                    PrintUtil.printTest3(mContext,orderList.get(position));
+                }
             }
         });
 

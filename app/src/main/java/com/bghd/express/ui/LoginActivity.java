@@ -92,7 +92,10 @@ public class LoginActivity extends BaseActivity{
                 .permission(Permission.CAMERA
                         ,Permission.LOCATION
                         ,Permission.STORAGE
-                        ,Permission.CALENDAR)
+                        ,Permission.CALENDAR
+                        ,Permission.SENSORS
+                        ,Permission.PHONE
+                        ,Permission.SMS)
                 .rationale(new RationaleListener() {
                     @Override
                     public void showRequestPermissionRationale(int requestCode, Rationale rationale) {

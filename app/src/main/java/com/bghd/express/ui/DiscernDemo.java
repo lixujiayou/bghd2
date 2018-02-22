@@ -78,7 +78,7 @@ public class DiscernDemo extends BaseActivity {
         findViewById(R.id.bt_shibie).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                recognition(BitmapFactory.decodeResource(getResources(), R.drawable.iv_test));
+               // recognition(BitmapFactory.decodeResource(getResources(), R.drawable.iv_test));
             }
         });
     }

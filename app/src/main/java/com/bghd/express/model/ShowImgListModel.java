@@ -71,11 +71,15 @@ public class ShowImgListModel extends BaseViewModel {
                             if (!ToolUtil.isEmpty(roundSiteEntity.getData())) {
                                 roundSiteList.postValue(roundSiteEntity.getData());
                             } else {
-                                onCallBackListener.onErro();
+                                if(onCallBackListener != null) {
+                                    onCallBackListener.onErro();
+                                }
                                 ToastUtil.showToast(mContext, "轮播图无数据", ToastUtil.TOAST_TYPE_WARNING);
                             }
                         } else {
-                            onCallBackListener.onErro();
+                            if(onCallBackListener != null) {
+                                onCallBackListener.onErro();
+                            }
                             ToastUtil.showToast(mContext, roundSiteEntity.getInfo(), ToastUtil.TOAST_TYPE_ERRO);
                         }
 
@@ -84,7 +88,9 @@ public class ShowImgListModel extends BaseViewModel {
                     @Override
                     public void onError(Throwable e) {
                         //dismissProgressDialog();
-                        onCallBackListener.onErro();
+                        if(onCallBackListener != null) {
+                            onCallBackListener.onErro();
+                        }
                         String strMsg = Constance.getMsgByException(e);
                         ToastUtil.showToast(mContext, strMsg, ToastUtil.TOAST_TYPE_ERRO);
                     }

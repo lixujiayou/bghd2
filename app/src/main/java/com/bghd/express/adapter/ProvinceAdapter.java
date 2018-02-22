@@ -60,8 +60,8 @@ public class ProvinceAdapter extends BaseAdapter implements SectionIndexer {
         {
             holder=new ViewHolder();
             view=LayoutInflater.from(mContext).inflate(R.layout.item,null);
-            holder.tvLetter=  view.findViewById(R.id.catalog);
-            holder.tvTitle=  view.findViewById(R.id.title);
+            holder.tvLetter= (TextView) view.findViewById(R.id.catalog);
+            holder.tvTitle= (TextView) view.findViewById(R.id.title);
             view.setTag(holder);
         }
         else

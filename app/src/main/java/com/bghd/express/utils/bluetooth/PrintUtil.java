@@ -18,12 +18,7 @@ import HPRTAndroidSDKA300.HPRTPrinterHelper;
 public class PrintUtil {
     public static void printTest3(Context paramContext, OrderListEntity.DataBean paramDataBean)
     {
-        if (!checkClick.isClickEvent()) return;
 
-        if (!HPRTPrinterHelper.IsOpened()) {
-           ToastUtil.showToast(paramContext,"请连接蓝牙",ToastUtil.TOAST_TYPE_WARNING);
-            return;
-        }
         String str3 = "123456789779";
         String str2 = "";
         String str4 = "";
@@ -133,14 +128,14 @@ public class PrintUtil {
 
 
 
-                HPRTPrinterHelper.AutLine("137", String.valueOf(129), 425, 8, true,true,str1);
+                HPRTPrinterHelper.AutLine("137", String.valueOf(129), 425, 8, true,false,str1);
                 HPRTPrinterHelper.SetBold("0");
                 HPRTPrinterHelper.Line("0", String.valueOf(211), "600", String.valueOf(211), "2");
                 HPRTPrinterHelper.Text(HPRTPrinterHelper.TEXT, "4", "0", "0", String.valueOf(230), "寄");
                 HPRTPrinterHelper.Text(HPRTPrinterHelper.TEXT, "4", "0", "0", String.valueOf(281), "件");
                 HPRTPrinterHelper.Text(HPRTPrinterHelper.TEXT, "8", "0", "65", String.valueOf(221), "姓名:" + paramDataBean.getShipuser_truename() + "  电话:" + paramDataBean.getShipuser_mobile());
                 HPRTPrinterHelper.Text(HPRTPrinterHelper.TEXT, "8", "0", "65", String.valueOf(250), "地址:");
-                HPRTPrinterHelper.AutLine("137", String.valueOf(250), 425, 8, true,true,(String)localObject1);
+                HPRTPrinterHelper.AutLine("137", String.valueOf(250), 425, 8, true,false,(String)localObject1);
                 HPRTPrinterHelper.Line("0", String.valueOf(332), "600", String.valueOf(332), "2");
                 HPRTPrinterHelper.Text(HPRTPrinterHelper.TEXT, "3", "0", String.valueOf(430), String.valueOf(355), "客户济南转运");
                 HPRTPrinterHelper.Text(HPRTPrinterHelper.TEXT, "3", "0", String.valueOf(415), String.valueOf(390), "若退回请发53168");
@@ -176,14 +171,14 @@ public class PrintUtil {
                 HPRTPrinterHelper.SetBold("2");
                 HPRTPrinterHelper.Text(HPRTPrinterHelper.TEXT, "8", "0", "65", String.valueOf(564), "姓名:" + paramDataBean.getGetuser_truename() + "  电话:" + paramDataBean.getGetuser_mobile());
                 HPRTPrinterHelper.Text(HPRTPrinterHelper.TEXT, "8", "0", "65", String.valueOf(593), "地址:");
-                HPRTPrinterHelper.AutLine("137", String.valueOf(593), 425, 8, true,true,str1);
+                HPRTPrinterHelper.AutLine("137", String.valueOf(593), 425, 8, true,false,str1);
                 HPRTPrinterHelper.SetBold("0");
                 HPRTPrinterHelper.Line("0", String.valueOf(675), "600", String.valueOf(675), "2");
                 HPRTPrinterHelper.Text(HPRTPrinterHelper.TEXT, "4", "0", "0", String.valueOf(694), "寄");
                 HPRTPrinterHelper.Text(HPRTPrinterHelper.TEXT, "4", "0", "0", String.valueOf(745), "件");
                 HPRTPrinterHelper.Text(HPRTPrinterHelper.TEXT, "8", "0", "65", String.valueOf(685), "姓名:" + paramDataBean.getShipuser_truename() + "  电话:" + paramDataBean.getShipuser_mobile());
                 HPRTPrinterHelper.Text(HPRTPrinterHelper.TEXT, "8", "0", "65", String.valueOf(714), "地址:");
-                HPRTPrinterHelper.AutLine("137", String.valueOf(714), 425, 8, true,true,(String)localObject1);
+                HPRTPrinterHelper.AutLine("137", String.valueOf(714), 425, 8, true,false,(String)localObject1);
                 HPRTPrinterHelper.Line("0", String.valueOf(796), "600", String.valueOf(796), "2");
                 HPRTPrinterHelper.Barcode(HPRTPrinterHelper.BARCODE, HPRTPrinterHelper.code128, "1", "2", "60", "0", String.valueOf(806), false, "7", "0", "5", (String)localObject3);
                 HPRTPrinterHelper.Text(HPRTPrinterHelper.TEXT, "8", "0", "0", String.valueOf(873), "代收转运运单号码:");
@@ -208,14 +203,14 @@ public class PrintUtil {
                 HPRTPrinterHelper.SetBold("2");
                 HPRTPrinterHelper.Text(HPRTPrinterHelper.TEXT, "8", "0", "65", String.valueOf(996), "姓名:" + paramDataBean.getGetuser_truename() + "  电话:" + paramDataBean.getGetuser_mobile());
                 HPRTPrinterHelper.Text(HPRTPrinterHelper.TEXT, "8", "0", "65", String.valueOf(1025), "地址:");
-                HPRTPrinterHelper.AutLine("137", String.valueOf(1025), 425, 8,true,true, str1);
+                HPRTPrinterHelper.AutLine("137", String.valueOf(1025), 425, 8,true,false, str1);
                 HPRTPrinterHelper.SetBold("0");
                 HPRTPrinterHelper.Line("0", String.valueOf(1107), "600", String.valueOf(1107), "2");
                 HPRTPrinterHelper.Text(HPRTPrinterHelper.TEXT, "4", "0", "0", String.valueOf(1126), "寄");
                 HPRTPrinterHelper.Text(HPRTPrinterHelper.TEXT, "4", "0", "0", String.valueOf(1177), "件");
                 HPRTPrinterHelper.Text(HPRTPrinterHelper.TEXT, "8", "0", "65", String.valueOf(1117), "姓名:" + paramDataBean.getShipuser_truename() + "  电话:" + paramDataBean.getShipuser_mobile());
                 HPRTPrinterHelper.Text(HPRTPrinterHelper.TEXT, "8", "0", "65", String.valueOf(1146), "地址:");
-                HPRTPrinterHelper.AutLine("137", String.valueOf(1146), 425, 8, true,true,(String)localObject1);
+                HPRTPrinterHelper.AutLine("137", String.valueOf(1146), 425, 8, true,false,(String)localObject1);
                 HPRTPrinterHelper.Line("0", String.valueOf(1228), "600", String.valueOf(1228), "2");
                 HPRTPrinterHelper.Barcode(HPRTPrinterHelper.BARCODE, HPRTPrinterHelper.code128, "1", "2", "60", "0", String.valueOf(1238), false, "7", "0", "5", (String)localObject3);
                 HPRTPrinterHelper.Text(HPRTPrinterHelper.TEXT, "8", "0", "0", String.valueOf(1305), "代收转运运单号码:");
@@ -227,8 +222,8 @@ public class PrintUtil {
                 HPRTPrinterHelper.Text(HPRTPrinterHelper.TEXT, "8", "0", "0", String.valueOf(1383), "(此单发件人留存)");
                 HPRTPrinterHelper.SetMag("2", "2");
                 HPRTPrinterHelper.SetBold("2");
-                HPRTPrinterHelper.AutLine("260", String.valueOf(1306), 240, 3,true,true, paramDataBean.getOne());
-                HPRTPrinterHelper.AutLine("260", String.valueOf(1346), 240, 3,true,true, paramDataBean.getTwo());
+                HPRTPrinterHelper.AutLine("260", String.valueOf(1306), 240, 3,true,false, paramDataBean.getOne());
+                HPRTPrinterHelper.AutLine("260", String.valueOf(1346), 240, 3,true,false, paramDataBean.getTwo());
                 HPRTPrinterHelper.SetBold("0");
                 HPRTPrinterHelper.SetMag("1", "1");
                 HPRTPrinterHelper.Text(HPRTPrinterHelper.TEXT, "3", "0", "260", String.valueOf(1236), "打印日期:" + time());

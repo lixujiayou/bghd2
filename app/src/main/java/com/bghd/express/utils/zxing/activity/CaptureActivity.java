@@ -443,7 +443,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         switch (view.getId()) {
 
             case R.id.find_scan_generate_btn:
-                startActivity(new Intent(CaptureActivity.this, FindGenerateCodeAty.class));
+                //startActivity(new Intent(CaptureActivity.this, FindGenerateCodeAty.class));
                 break;
             case R.id.find_scan_light_btn:
                 operateLight();

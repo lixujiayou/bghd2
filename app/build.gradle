@@ -30,7 +30,13 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+
 }
+
+
+
+
 ext {
     arch_version = '1.0.0-beta2'
 }
@@ -64,10 +70,12 @@ dependencies {
     annotationProcessor "android.arch.persistence.room:compiler:${arch_version}"
 
     // RxJava support for Room
-    implementation 'android.arch.persistence.room:rxjava2:1.0.0-alpha5'
+
+    //implementation 'android.arch.persistence.room:rxjava2:1.0.0-alpha5'
 
     // Testing support
-    androidTestImplementation 'android.arch.core:core-testing:1.0.0-alpha5'
+
+    //androidTestImplementation 'android.arch.core:core-testing:1.0.0-alpha5'
 
     //toast
     compile 'com.github.GrenderG:Toasty:1.2.5'
@@ -93,7 +101,8 @@ dependencies {
 
     //compile 'com.google.zxing:core:3.3.0'
     implementation files('libs/zxing-4.7.3.jar')
-    compile 'com.afollestad.material-dialogs:commons:0.9.6.0'
+
+    //compile 'com.afollestad.material-dialogs:commons:0.9.6.0'
 
     //权限
     compile 'com.yanzhenjie:permission:1.1.2'
