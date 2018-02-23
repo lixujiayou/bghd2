@@ -276,14 +276,17 @@ public class AddTellActivity extends BaseActivity implements Toolbar.OnMenuItemC
         imageFactoryModel = new ImageFactoryModel(AddTellActivity.this);
         imageFactoryModel.setOnChangeCallback(new ImageFactoryModel.OnErroListener() {
             @Override
-            public void onSuccess(List<String> imgList) {
+            public void onSuccess(List<String> imgList, List<String> imgList2, int type) {
                 addTellModel.addTell(mRequestClient
                         , mSaveType
                         , etName.getText().toString()
                         , etPhone.getText().toString()
                         , mAdressId
-                        , etAdressInfo.getText().toString());
+                        , etAdressInfo.getText().toString()
+                        , imgList.get(0)
+                );
             }
+
 
             @Override
             public void onErro(String erroMsg) {
@@ -342,13 +345,12 @@ public class AddTellActivity extends BaseActivity implements Toolbar.OnMenuItemC
         }
         String nameStr = adressBean.getTruename();
         String phoneStr = adressBean.getMobile();
-        String adressStr = adressBean.getAddress();
+        String adressInfo = adressBean.getAddress();
         mAdressId = adressBean.getAddress_id();
-        String adressInfo = adressBean.getCountry()
+        String adressStr = adressBean.getCountry()
                 + adressBean.getProvince()
                 + adressBean.getCity()
-                + adressBean.getDistrict()
-                + adressBean.getAddress();
+                + adressBean.getDistrict();
 
         if (!StringUtils.isEmpty(nameStr)) {
             etName.setText(nameStr);
@@ -376,8 +378,6 @@ public class AddTellActivity extends BaseActivity implements Toolbar.OnMenuItemC
                 break;
             case R.id.ll_tell_save:
                 if (canSave()) {
-
-
                     if (cTellStatsu.equals(TELL_STATUS_EDIT)) {
                         changeTellModel.changeTell(mRequestClient
                                 , adressBean.getId()
@@ -386,7 +386,7 @@ public class AddTellActivity extends BaseActivity implements Toolbar.OnMenuItemC
                                 , mAdressId
                                 , etAdressInfo.getText().toString());
                     } else {
-                        imageFactoryModel.compressImg(mImageList);
+                        imageFactoryModel.compressImg(mImageList,null);
                     }
                 }
                 break;
@@ -419,7 +419,7 @@ public class AddTellActivity extends BaseActivity implements Toolbar.OnMenuItemC
         } else if (isEmptyByEditText(etAdressInfo)) {
             ToastUtil.showToast(AddTellActivity.this, "请填写'详细地址'", ToastUtil.TOAST_TYPE_WARNING);
             return false;
-        } else if (ToolUtil.isEmpty(mImageList)) {
+        } else if (ToolUtil.isEmpty(mImageList) && !cTellStatsu.equals(TELL_STATUS_EDIT)) {
             ToastUtil.showToast(AddTellActivity.this, "请填写上传身份证照片", ToastUtil.TOAST_TYPE_WARNING);
             return false;
         }

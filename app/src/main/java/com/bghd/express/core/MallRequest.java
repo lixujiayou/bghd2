@@ -60,7 +60,9 @@ public interface MallRequest {
             , @Field("getuser_address") String getuser_address
             , @Field("order_price") String order_price
             , @Field("order_weight") String order_weight
-            , @Field("manual") String manual
+            , @Field("express_no") String manual
+            , @Field("shipuser_img") String shipuser_img
+            , @Field("getuser_img") String getuser_img
     );
 
     @FormUrlEncoded
@@ -87,6 +89,7 @@ public interface MallRequest {
             ,@Field("mobile") String mobile
             ,@Field("address_id") String address_id
             ,@Field("address") String address
+            ,@Field("base64") String base64
     );
 
 

@@ -75,7 +75,10 @@ public class SaveOrderModel extends BaseViewModel {
             , String getuser_address
             , String order_price
             , String order_weight
-            , String manual) {
+            , String express_no
+            , String shipuser_img
+            , String getuser_img
+    ) {
         showProgressDialog(mContext, "添加数据中...");
         SPUtil sp = new SPUtil(mContext,SPUtil.USER);
         String uId = sp.getString(SPUtil.USER_UID,"");
@@ -90,7 +93,10 @@ public class SaveOrderModel extends BaseViewModel {
                 ,getuser_address
                 ,order_price
                 ,order_weight
-                ,manual)
+                ,express_no
+                ,shipuser_img
+                ,getuser_img
+        )
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<SaveOrderEntity>() {

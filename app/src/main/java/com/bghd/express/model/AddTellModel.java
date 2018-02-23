@@ -49,18 +49,17 @@ public class AddTellModel extends BaseViewModel {
     }
 
     /**
-     *
      * @param mRequest
      * @param type  （shipuser|getuser）  寄件人|收件人
      * @param truename   真实姓名
      * @param mobile    手机号
      * @param address_id     获取三级联动的地址
      */
-    public void addTell(MallRequest mRequest,String type,String truename,String mobile, String address_id,String address) {
+    public void addTell(MallRequest mRequest,String type,String truename,String mobile, String address_id,String address,String base64) {
         showProgressDialog(mContext, "正在保存...");
         SPUtil sp = new SPUtil(mContext,SPUtil.USER);
         String uId = sp.getString(SPUtil.USER_UID,"");
-        mRequest.addTell(uId,type,truename,mobile,address_id,address)
+        mRequest.addTell(uId,type,truename,mobile,address_id,address,base64)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(new Observer<SaveOrderEntity>() {
@@ -79,16 +78,19 @@ public class AddTellModel extends BaseViewModel {
                             roundSiteList.postValue(roundSiteEntity);
 
                         } else {
-                            onCallBackListener.onErro();
+                            if(onCallBackListener != null){
+                                onCallBackListener.onErro();
+                            }
                             ToastUtil.showToast(mContext, roundSiteEntity.getInfo(), ToastUtil.TOAST_TYPE_ERRO);
                         }
-
                     }
 
                     @Override
                     public void onError(Throwable e) {
                         dismissProgressDialog();
-                        onCallBackListener.onErro();
+                        if(onCallBackListener != null){
+                            onCallBackListener.onErro();
+                        }
                         String strMsg = Constance.getMsgByException(e);
                         ToastUtil.showToast(mContext, strMsg, ToastUtil.TOAST_TYPE_ERRO);
                     }
@@ -101,7 +103,6 @@ public class AddTellModel extends BaseViewModel {
 
 
     private OnErroListener onCallBackListener;
-
     public void setOnErroCallback(OnErroListener onItemClickListener) {
         this.onCallBackListener = onItemClickListener;
     }

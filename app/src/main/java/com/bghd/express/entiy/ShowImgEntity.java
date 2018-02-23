@@ -68,6 +68,7 @@ public class ShowImgEntity {
         private String status;
         private String create_time;
         private String img;
+        private String description;
 
         public String getId() {
             return id;
@@ -155,6 +156,14 @@ public class ShowImgEntity {
 
         public void setImg(String img) {
             this.img = img;
+        }
+
+        public String getDescription() {
+            return description;
+        }
+
+        public void setDescription(String description) {
+            this.description = description;
         }
     }
 }

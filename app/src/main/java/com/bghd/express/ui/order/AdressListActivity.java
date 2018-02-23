@@ -131,6 +131,7 @@ public class AdressListActivity extends BaseActivity implements Toolbar.OnMenuIt
                     fIntent.putExtra(FINISH_NAME,nameTest);
                     fIntent.putExtra(FINISH_ID,adressTest.getId());
                     //fIntent.putStringArrayListExtra(ADRESSIDLIST, mSelectIdList);
+                    fIntent.putExtra(ADRESSIDLIST, adressTest.getId());
                     fIntent.putStringArrayListExtra(ADRESSNAMELIST, mSelectNameList);
                     setResult(FINISH_CODE,fIntent);
                     finish();

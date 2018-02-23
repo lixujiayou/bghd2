@@ -1,6 +1,7 @@
 package com.bghd.express.adapter;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -98,11 +99,8 @@ public class MyImgAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
                 });
             }
         }else {
-            Log.d("qqqq","111```"+position);
             ((ItemViewHolder) holder).ivDelete.setVisibility(View.GONE);
-//            Glide.with(context)
-//                    .load(context.getResources().getDrawable(R.drawable.icon_add_pic))
-//                    .into(((ItemViewHolder) holder).ivImg);
+            ((ItemViewHolder) holder).ivImg.setImageDrawable(ContextCompat.getDrawable(context,R.drawable.icon_add_pic));
             if (onItemClickListener != null) {
                 ((ItemViewHolder) holder).llImg.setOnClickListener(new View.OnClickListener() {
                     @Override

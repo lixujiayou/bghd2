@@ -38,6 +38,7 @@ public class AllUrl {
     //    truename  真实姓名
     //    mobile   手机号
     //    address_id   获取三级联动的地址
+    //base64
     //address
     public final static String addTellList = "addnotes";
 
@@ -69,6 +70,7 @@ public class AllUrl {
      order_price   实付款
      order_weight    重量
      manual    手动录入单号
+     express_no    手动录入单号
      */
     public final static String addOrder = "save";
 

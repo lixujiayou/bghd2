@@ -204,15 +204,18 @@ public class PlaceOrderActivity extends BaseActivity {
                 Log.d("qqqqqq","图片个数"+dataBeans.size());
                 for(ShowImgEntity.DataBean img: dataBeans){
                     imageList.add(img.getImg());
-                  //  imageList.add("http://bmob-cdn-9637.b0.upaiyun.com/2017/11/13/82486396404ad7dd808ad45414e3a040.png");
-                    strList.add(img.getName());
+                    strList.add(img.getDescription());
                 }
-                //banner.update(imageList,strList);
                 initBanner();
             }
         });
         showImgListModel.getImgList(mRequestClient);
-
+        showImgListModel.setOnErroCallback(new ShowImgListModel.OnErroListener() {
+            @Override
+            public void onErro() {
+                initBanner();
+            }
+        });
 
 
         imageAdapter = new MyImgAdapter(PlaceOrderActivity.this, mImageList);
@@ -240,7 +243,7 @@ public class PlaceOrderActivity extends BaseActivity {
 
             @Override
             public void onDeleteClick(View view, int position) {
-                showSelectDialog(position);
+                showSelectDialog(1,position);
             }
         });
 
@@ -250,20 +253,67 @@ public class PlaceOrderActivity extends BaseActivity {
         imageFactoryModel = new ImageFactoryModel(PlaceOrderActivity.this);
         imageFactoryModel.setOnChangeCallback(new ImageFactoryModel.OnErroListener() {
             @Override
-            public void onSuccess(List<String> imgList) {
-                saveOrderModel.saveOrder(mRequestClient
-                        , mSendAdressId
-                        , mAccpetAdressId
-                        , etSName.getText().toString().trim()
-                        , etSPHone.getText().toString().trim()
-                        , etSAdressInfo.getText().toString().trim()
-                        , etAName.getText().toString().trim()
-                        , etAPHone.getText().toString().trim()
-                        , etAAdressInfo.getText().toString().trim()
-                        , etOrderPrice.getText().toString().trim()
-                        , etWeight.getText().toString().trim()
-                        , etOrderCode.getText().toString().trim());
+            public void onSuccess(List<String> imgList,List<String> imgList2, int type) {
+                Log.d("qqqqq","imgList=="+imgList.get(0));
+                if(type == 1){
+                    if(!ToolUtil.isEmpty(imgList2)){
+                        saveOrderModel.saveOrder(mRequestClient
+                                , mSendAdressId
+                                , mAccpetAdressId
+                                , etSName.getText().toString().trim()
+                                , etSPHone.getText().toString().trim()
+                                , etSAdressInfo.getText().toString().trim()
+                                , etAName.getText().toString().trim()
+                                , etAPHone.getText().toString().trim()
+                                , etAAdressInfo.getText().toString().trim()
+                                , etOrderPrice.getText().toString().trim()
+                                , etWeight.getText().toString().trim()
+                                , etOrderCode.getText().toString().trim()
+                                ,""
+                                ,imgList2.get(0)
+                        );
+                    }
+                }else if(type == 0){
+                    if(!ToolUtil.isEmpty(imgList)){
+                        saveOrderModel.saveOrder(mRequestClient
+                                , mSendAdressId
+                                , mAccpetAdressId
+                                , etSName.getText().toString().trim()
+                                , etSPHone.getText().toString().trim()
+                                , etSAdressInfo.getText().toString().trim()
+                                , etAName.getText().toString().trim()
+                                , etAPHone.getText().toString().trim()
+                                , etAAdressInfo.getText().toString().trim()
+                                , etOrderPrice.getText().toString().trim()
+                                , etWeight.getText().toString().trim()
+                                , etOrderCode.getText().toString().trim()
+                                ,imgList.get(0)
+                                ,""
+                        );
+                    }
+                }else{
+                    if(!ToolUtil.isEmpty(imgList) && !ToolUtil.isEmpty(imgList2)){
+                        saveOrderModel.saveOrder(mRequestClient
+                                , mSendAdressId
+                                , mAccpetAdressId
+                                , etSName.getText().toString().trim()
+                                , etSPHone.getText().toString().trim()
+                                , etSAdressInfo.getText().toString().trim()
+                                , etAName.getText().toString().trim()
+                                , etAPHone.getText().toString().trim()
+                                , etAAdressInfo.getText().toString().trim()
+                                , etOrderPrice.getText().toString().trim()
+                                , etWeight.getText().toString().trim()
+                                , etOrderCode.getText().toString().trim()
+                                ,imgList.get(0)
+                                ,imgList2.get(0)
+                                );
+                    }
+                }
+
             }
+
+
 
             @Override
             public void onErro(String erroMsg) {
@@ -282,7 +332,7 @@ public class PlaceOrderActivity extends BaseActivity {
             @Override
             public void onItemClick(View view, int position) {
                 Intent picIntent = new Intent(PlaceOrderActivity.this, ImageLookActivity.class);
-                picIntent.putExtra(ImageLookActivity.IMAGE_INTENT, mImageList.get(position));
+                picIntent.putExtra(ImageLookActivity.IMAGE_INTENT, mImageListA.get(position));
                 startActivity(picIntent);
             }
 
@@ -297,7 +347,7 @@ public class PlaceOrderActivity extends BaseActivity {
 
             @Override
             public void onDeleteClick(View view, int position) {
-                showSelectDialog(position);
+                showSelectDialog(0,position);
             }
         });
 
@@ -305,22 +355,61 @@ public class PlaceOrderActivity extends BaseActivity {
         imageFactoryModelA = new ImageFactoryModel(PlaceOrderActivity.this);
         imageFactoryModelA.setOnChangeCallback(new ImageFactoryModel.OnErroListener() {
             @Override
-            public void onSuccess(List<String> imgList) {
-                if(!isASelected && isSSelected) {
-                    saveOrderModel.saveOrder(mRequestClient
-                            , mSendAdressId
-                            , mAccpetAdressId
-                            , etSName.getText().toString().trim()
-                            , etSPHone.getText().toString().trim()
-                            , etSAdressInfo.getText().toString().trim()
-                            , etAName.getText().toString().trim()
-                            , etAPHone.getText().toString().trim()
-                            , etAAdressInfo.getText().toString().trim()
-                            , etOrderPrice.getText().toString().trim()
-                            , etWeight.getText().toString().trim()
-                            , etOrderCode.getText().toString().trim());
+            public void onSuccess(List<String> imgList,List<String> imgList2, int type) {
+                if(type == 0){
+                    if(!ToolUtil.isEmpty(imgList2)){
+                        saveOrderModel.saveOrder(mRequestClient
+                                , mSendAdressId
+                                , mAccpetAdressId
+                                , etSName.getText().toString().trim()
+                                , etSPHone.getText().toString().trim()
+                                , etSAdressInfo.getText().toString().trim()
+                                , etAName.getText().toString().trim()
+                                , etAPHone.getText().toString().trim()
+                                , etAAdressInfo.getText().toString().trim()
+                                , etOrderPrice.getText().toString().trim()
+                                , etWeight.getText().toString().trim()
+                                , etOrderCode.getText().toString().trim()
+                                ,""
+                                ,imgList2.get(0)
+                        );
+                    }
+                }else if(type == 1){
+                    if(!ToolUtil.isEmpty(imgList)){
+                        saveOrderModel.saveOrder(mRequestClient
+                                , mSendAdressId
+                                , mAccpetAdressId
+                                , etSName.getText().toString().trim()
+                                , etSPHone.getText().toString().trim()
+                                , etSAdressInfo.getText().toString().trim()
+                                , etAName.getText().toString().trim()
+                                , etAPHone.getText().toString().trim()
+                                , etAAdressInfo.getText().toString().trim()
+                                , etOrderPrice.getText().toString().trim()
+                                , etWeight.getText().toString().trim()
+                                , etOrderCode.getText().toString().trim()
+                                ,imgList.get(0)
+                                ,""
+                        );
+                    }
                 }else{
-                    imageFactoryModel.compressImg(mImageList);
+                    if(!ToolUtil.isEmpty(imgList) && !ToolUtil.isEmpty(imgList2)){
+                        saveOrderModel.saveOrder(mRequestClient
+                                , mSendAdressId
+                                , mAccpetAdressId
+                                , etSName.getText().toString().trim()
+                                , etSPHone.getText().toString().trim()
+                                , etSAdressInfo.getText().toString().trim()
+                                , etAName.getText().toString().trim()
+                                , etAPHone.getText().toString().trim()
+                                , etAAdressInfo.getText().toString().trim()
+                                , etOrderPrice.getText().toString().trim()
+                                , etWeight.getText().toString().trim()
+                                , etOrderCode.getText().toString().trim()
+                                ,imgList.get(0)
+                                ,imgList2.get(0)
+                        );
+                    }
                 }
             }
 
@@ -376,12 +465,12 @@ public class PlaceOrderActivity extends BaseActivity {
             //提交订单
             case R.id.ll_meter_save:
                 if (canSave()) {
-                    if(isASelected && isASelected) {
-                        imageFactoryModel.compressImg(mImageList);
+                    if(!isASelected && !isASelected) {
+                        imageFactoryModel.compressImg(mImageList,mImageListA);
                     }else if(!isASelected && isSSelected){
-                        imageFactoryModelA.compressImg(mImageListA);
+                        imageFactoryModelA.compressImg(null,mImageListA);
                     }else if(isASelected && !isSSelected){
-                        imageFactoryModel.compressImg(mImageList);
+                        imageFactoryModel.compressImg(mImageList,null);
                     }else{
                         saveOrderModel.saveOrder(mRequestClient
                                 , mSendAdressId
@@ -394,7 +483,10 @@ public class PlaceOrderActivity extends BaseActivity {
                                 , etAAdressInfo.getText().toString().trim()
                                 , etOrderPrice.getText().toString().trim()
                                 , etWeight.getText().toString().trim()
-                                , etOrderCode.getText().toString().trim());
+                                , etOrderCode.getText().toString().trim()
+                                ,""
+                                ,""
+                        );
                     }
                 }
                 break;
@@ -698,7 +790,12 @@ private void startCamerasA() {
                 .start(PlaceOrderActivity.this, MULTI_IMGA);
     }
 
-    private void showSelectDialog(final int pos) {
+    /**
+     * type 0 : 收件  1：寄件
+     * @param type
+     * @param pos
+     */
+    private void showSelectDialog(final int type, final int pos) {
         new SweetAlertDialog(this, SweetAlertDialog.WARNING_TYPE)
                 .setTitleText("是否删除当前照片?")
                 // .setContentText("删除后无法恢复!")
@@ -708,10 +805,19 @@ private void startCamerasA() {
                     @Override
                     public void onClick(SweetAlertDialog sDialog) {
                         sDialog.dismissWithAnimation();
-                        if (!ToolUtil.isEmpty(mImageList)) {
-                            mImageList.remove(pos);
-                            imageAdapter.notifyDataSetChanged();
+                        if(type == 1) {
+                            if (!ToolUtil.isEmpty(mImageList)) {
+                                mImageList.remove(pos);
+                                imageAdapter.notifyDataSetChanged();
+                            }
+                        }else{
+                            if (!ToolUtil.isEmpty(mImageListA)) {
+                                mImageListA.remove(pos);
+                                imageAdapterA.notifyDataSetChanged();
+                            }
                         }
+
+
                     }
                 })
                 .setCancelClickListener(new SweetAlertDialog.OnSweetClickListener() {

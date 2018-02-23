@@ -95,7 +95,8 @@ public class LoginActivity extends BaseActivity{
                         ,Permission.CALENDAR
                         ,Permission.SENSORS
                         ,Permission.PHONE
-                        ,Permission.SMS)
+                        ,Permission.SMS
+                )
                 .rationale(new RationaleListener() {
                     @Override
                     public void showRequestPermissionRationale(int requestCode, Rationale rationale) {
