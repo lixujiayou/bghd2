@@ -140,6 +140,8 @@ public class OffLineFragment extends BaseFragment implements View.OnClickListene
                     }
                 }else{
                     PrintUtil.printTest3(mContext,orderList.get(position));
+                    orderList.get(position).setIs_print("1");
+                    orderListAdapter.notifyDataSetChanged();
                 }
             }
         });

@@ -21,7 +21,7 @@ public class AllUrl {
     //    mobile   手机号
     //    address_id  三级联动地址id 一户给你发获取地址的接口
     //    address   详细地址
-    public final static String mChangeTell = "delnotes";
+    public final static String mChangeTell = "savenotes";
 
     //获取通讯录
     //truename 模糊查询

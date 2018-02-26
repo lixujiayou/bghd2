@@ -80,8 +80,6 @@ public class MineFragment extends BaseFragment implements View.OnClickListener{
         btLoginOut.setOnClickListener(this);
         llOver.setOnClickListener(this);
 
-
-
         SPUtil sp = new SPUtil(mContext,SPUtil.USER);
         if(sp.getInt(SPUtil.USER_RIJIE,0) != 1){
             llOver.setVisibility(View.GONE);

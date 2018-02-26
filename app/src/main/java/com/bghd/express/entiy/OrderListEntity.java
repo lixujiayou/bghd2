@@ -35,7 +35,7 @@ public class OrderListEntity {
     public static class DataBean {
         /**
          * id : 52387
-         * is_print : 1
+         * is_print : 1打印  0  没打印
          * order_no : 998093937569
          * number : 0
          * shipuser_truename : 樊兆焕

@@ -200,6 +200,7 @@ public class AddTellActivity extends BaseActivity implements Toolbar.OnMenuItemC
             mToolbar.setTitle("新增寄件人");
             mSaveType = shipuser;
         } else {
+            llPic.setVisibility(View.GONE);
             mToolbar.setTitle("新增收件人");
             mSaveType = getuser;
         }
@@ -379,14 +380,26 @@ public class AddTellActivity extends BaseActivity implements Toolbar.OnMenuItemC
             case R.id.ll_tell_save:
                 if (canSave()) {
                     if (cTellStatsu.equals(TELL_STATUS_EDIT)) {
+                        //编辑不用传照片
                         changeTellModel.changeTell(mRequestClient
                                 , adressBean.getId()
                                 , etName.getText().toString()
                                 , etPhone.getText().toString()
                                 , mAdressId
                                 , etAdressInfo.getText().toString());
-                    } else {
+                    }else if(mTellType.equals(TELL_TYPE_SEND)){
+                        //新增发件人需要传照片
                         imageFactoryModel.compressImg(mImageList,null);
+                    } else {
+                        //新增收件人不用传照片
+                        addTellModel.addTell(mRequestClient
+                                , mSaveType
+                                , etName.getText().toString()
+                                , etPhone.getText().toString()
+                                , mAdressId
+                                , etAdressInfo.getText().toString()
+                                , ""
+                        );
                     }
                 }
                 break;
@@ -419,7 +432,7 @@ public class AddTellActivity extends BaseActivity implements Toolbar.OnMenuItemC
         } else if (isEmptyByEditText(etAdressInfo)) {
             ToastUtil.showToast(AddTellActivity.this, "请填写'详细地址'", ToastUtil.TOAST_TYPE_WARNING);
             return false;
-        } else if (ToolUtil.isEmpty(mImageList) && !cTellStatsu.equals(TELL_STATUS_EDIT)) {
+        } else if (ToolUtil.isEmpty(mImageList) && !cTellStatsu.equals(TELL_STATUS_EDIT) && mTellType.equals(TELL_TYPE_SEND)) {
             ToastUtil.showToast(AddTellActivity.this, "请填写上传身份证照片", ToastUtil.TOAST_TYPE_WARNING);
             return false;
         }

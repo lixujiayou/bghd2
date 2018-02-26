@@ -72,7 +72,9 @@ public class RiJieModel extends BaseViewModel {
                             roundSiteList.postValue(roundSiteEntity);
 
                         } else {
-                            onCallBackListener.onErro();
+                            if(onCallBackListener != null) {
+                                onCallBackListener.onErro();
+                            }
                             ToastUtil.showToast(mContext, roundSiteEntity.getInfo(), ToastUtil.TOAST_TYPE_ERRO);
                         }
 
@@ -81,7 +83,9 @@ public class RiJieModel extends BaseViewModel {
                     @Override
                     public void onError(Throwable e) {
                         dismissProgressDialog();
-                        onCallBackListener.onErro();
+                        if(onCallBackListener != null) {
+                            onCallBackListener.onErro();
+                        }
                         String strMsg = Constance.getMsgByException(e);
                         ToastUtil.showToast(mContext, strMsg, ToastUtil.TOAST_TYPE_ERRO);
                     }

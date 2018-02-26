@@ -83,6 +83,7 @@ public class LoginModel extends BaseViewModel {
         sha.putString(SPUtil.USER_PWD,pwd);
         sha.putString(SPUtil.USER_UID,userEntity.getData().getUid());
         sha.putString(SPUtil.USER_TOKEN,userToken);
+        sha.putInt(SPUtil.USER_RIJIE,userEntity.getRijie());
 
     }
 

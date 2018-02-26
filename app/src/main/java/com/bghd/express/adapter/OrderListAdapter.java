@@ -61,7 +61,5 @@ public class OrderListAdapter extends BaseQuickAdapter<OrderListEntity.DataBean,
         }
 
         helper.addOnClickListener(R.id.bt_order_print);
-
-
     }
 }

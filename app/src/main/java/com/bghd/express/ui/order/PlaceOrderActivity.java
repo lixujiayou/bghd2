@@ -135,8 +135,6 @@ public class PlaceOrderActivity extends BaseActivity {
     private boolean isASelected = false;//收件人
 
 
-
-
     @Override
     protected void initContentView(Bundle savedInstanceState) {
         setContentView(R.layout.activity_place_order);
@@ -464,12 +462,16 @@ public class PlaceOrderActivity extends BaseActivity {
                 break;
             //提交订单
             case R.id.ll_meter_save:
+
                 if (canSave()) {
-                    if(!isASelected && !isASelected) {
-                        imageFactoryModel.compressImg(mImageList,mImageListA);
-                    }else if(!isASelected && isSSelected){
-                        imageFactoryModelA.compressImg(null,mImageListA);
-                    }else if(isASelected && !isSSelected){
+                    //注释原因：收件人不用传照片
+//                    if(!isASelected && !isASelected) {
+//                        imageFactoryModel.compressImg(mImageList,mImageListA);
+//                    }else if(!isASelected && isSSelected){
+//                        imageFactoryModelA.compressImg(null,mImageListA);
+//                    }
+
+                    if(!isSSelected){   // if(isASelected && !isSSelected){
                         imageFactoryModel.compressImg(mImageList,null);
                     }else{
                         saveOrderModel.saveOrder(mRequestClient
@@ -556,10 +558,12 @@ public class PlaceOrderActivity extends BaseActivity {
         } else if (isEmptyByEditText(etSAdressInfo)) {
             ToastUtil.showToast(PlaceOrderActivity.this, "请填写寄件人详细地址", ToastUtil.TOAST_TYPE_WARNING);
             return false;
-        }else if(!isASelected && ToolUtil.isEmpty(mImageListA)){
-            ToastUtil.showToast(PlaceOrderActivity.this, "请选择收件人身份证照片", ToastUtil.TOAST_TYPE_WARNING);
-            return false;
-        }else if(!isSSelected && ToolUtil.isEmpty(mImageList)){
+        }
+//        else if(!isASelected && ToolUtil.isEmpty(mImageListA)){
+//            ToastUtil.showToast(PlaceOrderActivity.this, "请选择收件人身份证照片", ToastUtil.TOAST_TYPE_WARNING);
+//            return false;
+//        }
+        else if(!isSSelected && ToolUtil.isEmpty(mImageList)){
             ToastUtil.showToast(PlaceOrderActivity.this, "请选择寄件人身份证照片", ToastUtil.TOAST_TYPE_WARNING);
             return false;
         }
