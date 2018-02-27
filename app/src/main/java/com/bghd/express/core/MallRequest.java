@@ -69,9 +69,20 @@ public interface MallRequest {
     @POST(AllUrl.getShowImgList)
     Observable<ShowImgEntity> getShowImgList(@Field("id") String id);
 
+
+
     @FormUrlEncoded
     @POST(AllUrl.rijie)
     Observable<SaveOrderEntity> rijie(@Field("uid") String uid);
+
+    /**
+     * 修改打状态
+     * @param uid
+     * @return
+     */
+    @FormUrlEncoded
+    @POST(AllUrl.changePrintStatus)
+    Observable<SaveOrderEntity> changePrintStatus(@Field("uid") String uid,@Field("order_no") String order_no);
 
 
 

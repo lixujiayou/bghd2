@@ -58,7 +58,6 @@ public class AllUrl {
     //下单
     /**
      *uid
-     *
      *shipuser_address_id   寄件人地址id
      getuser_address_id    收件人地址id
      shipuser_truename   发件人姓名
@@ -73,6 +72,13 @@ public class AllUrl {
      express_no    手动录入单号
      */
     public final static String addOrder = "save";
+
+    /**
+     * 修改打印状态
+     * order_no
+     * uid
+     */
+    public final static String changePrintStatus = "savedayin";
 
     //获取订单打印状态
     /**

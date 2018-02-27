@@ -75,7 +75,6 @@ public class ImageFactoryModel{
                     .subscribe(new Observer<List<String>>() {
                         @Override
                         public void onSubscribe(Disposable d) {
-
                         }
 
                         @Override

@@ -19,7 +19,9 @@ import com.bghd.express.R;
 import com.bghd.express.adapter.OrderListAdapter;
 import com.bghd.express.core.Constance;
 import com.bghd.express.entiy.OrderListEntity;
+import com.bghd.express.entiy.SaveOrderEntity;
 import com.bghd.express.entiy.eventbean.MainEvent;
+import com.bghd.express.model.ChangePrintStatusModel;
 import com.bghd.express.model.OrderOffLineListModel;
 import com.bghd.express.ui.mine.print.Activity_DeviceList;
 import com.bghd.express.ui.mine.print.PrintAboutActivity;
@@ -53,6 +55,10 @@ public class OffLineFragment extends BaseFragment implements View.OnClickListene
 
     private SwipeRefreshLayout swipeRefreshLayout;
     private View emptyView;
+
+
+
+    private ChangePrintStatusModel changePrintStatusModel;
 
     private int currentPage = 1;
 
@@ -90,6 +96,14 @@ public class OffLineFragment extends BaseFragment implements View.OnClickListene
         recyclerView.setHasFixedSize(true);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
         recyclerView.setAdapter(orderListAdapter);
+        changePrintStatusModel = ViewModelProviders.of(this).get(ChangePrintStatusModel.class);
+        changePrintStatusModel.getCurrentData(mContext).observe(this, new Observer<SaveOrderEntity>() {
+            @Override
+            public void onChanged(@Nullable SaveOrderEntity saveOrderEntity) {
+
+            }
+        });
+
 
 
         orderListAdapter.setOnLoadMoreListener(new BaseQuickAdapter.RequestLoadMoreListener() {
@@ -116,6 +130,13 @@ public class OffLineFragment extends BaseFragment implements View.OnClickListene
         orderListAdapter.setOnItemChildClickListener(new BaseQuickAdapter.OnItemChildClickListener() {
             @Override
             public void onItemChildClick(BaseQuickAdapter adapter, View view, int position) {
+//                if(true){
+//                    changePrintStatusModel.addTell(mRequestClient,orderList.get(position).getOrder_no());
+//                   // PrintUtil.printTest3(mContext,orderList.get(position));
+//                    orderList.get(position).setIs_print("1");
+//                    orderListAdapter.notifyDataSetChanged();
+//                    return;
+//                }
                 if (!checkClick.isClickEvent()) return;
 
                 if (!HPRTPrinterHelper.IsOpened()) {
@@ -139,6 +160,7 @@ public class OffLineFragment extends BaseFragment implements View.OnClickListene
                         startActivityForResult(serverIntent, HPRTPrinterHelper.ACTIVITY_CONNECT_BT);
                     }
                 }else{
+                    changePrintStatusModel.addTell(mRequestClient,orderList.get(position).getOrder_no());
                     PrintUtil.printTest3(mContext,orderList.get(position));
                     orderList.get(position).setIs_print("1");
                     orderListAdapter.notifyDataSetChanged();
