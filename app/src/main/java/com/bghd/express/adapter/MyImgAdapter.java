@@ -24,7 +24,7 @@ public class MyImgAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> 
 
     private static final int TYPE_ITEM = 0;
     private static final int TYPE_FOOTER = 1;
-    private static final int IMAGE_MAX_NUM = 2;
+    private static final int IMAGE_MAX_NUM = 1;
     private Context context;
     private ArrayList<String> itemsEntities;
 
