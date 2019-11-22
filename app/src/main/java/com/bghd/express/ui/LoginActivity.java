@@ -3,6 +3,7 @@ package com.bghd.express.ui;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -60,6 +61,11 @@ public class LoginActivity extends BaseActivity{
 
             @Override
             public void onError(String erroMsg) {
+                AlertDialog.Builder alertdialogbuilder = new AlertDialog.Builder(LoginActivity.this);
+                alertdialogbuilder.setMessage(erroMsg);
+                alertdialogbuilder.setPositiveButton("知道了", null);
+                AlertDialog alertdialog1 = alertdialogbuilder.create();
+                alertdialog1.show();
 
             }
         });

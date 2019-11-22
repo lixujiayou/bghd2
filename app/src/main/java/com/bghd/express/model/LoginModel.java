@@ -12,8 +12,10 @@ import com.bghd.express.utils.base.BaseViewModel;
 import com.bghd.express.utils.tools.SPUtil;
 import com.bghd.express.utils.tools.ToastUtil;
 import com.cazaea.sweetalert.SweetAlertDialog;
+import com.google.gson.Gson;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -55,11 +57,13 @@ public class LoginModel extends BaseViewModel {
                     @Override
                     public void accept(UserEntity userEntity) throws Exception {
                         dismissProgressDialog();
+                        Gson gson = new Gson();
+                        Log.d("qqqqqq",gson.toJson(userEntity));
                         if(userEntity.getStatus() == Constance.REQUEST_SUCCESS_CODE){
                             saveSomeSth(userEntity,name,pwd);
                             onCallBackListener.onSuccess(userEntity);
                         }else{
-                            ToastUtil.showToast(mContext,userEntity.getInfo(),ToastUtil.TOAST_TYPE_ERRO);
+//                            ToastUtil.showToast(mContext,userEntity.getInfo(),ToastUtil.TOAST_TYPE_ERRO);
                             onCallBackListener.onError(userEntity.getInfo());
                         }
 
