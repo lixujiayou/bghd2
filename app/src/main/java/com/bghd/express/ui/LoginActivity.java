@@ -1,18 +1,22 @@
 package com.bghd.express.ui;
 
 import android.arch.lifecycle.ViewModelProviders;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.bghd.express.R;
+import com.bghd.express.core.Constance;
 import com.bghd.express.entiy.UserEntity;
 import com.bghd.express.model.LoginModel;
 import com.bghd.express.utils.base.BaseActivity;
 import com.bghd.express.utils.tools.SPUtil;
+import com.bghd.express.utils.tools.StringUtils;
 import com.yanzhenjie.permission.AndPermission;
 import com.yanzhenjie.permission.Permission;
 import com.yanzhenjie.permission.PermissionListener;
@@ -30,10 +34,12 @@ public class LoginActivity extends BaseActivity{
     private Button btLogin;
     private LoginModel loginModel;
     private EditText etName,etPwd;
+    private TextView tv_private;
 
     @Override
     protected void initContentView(Bundle savedInstanceState) {
         setContentView(R.layout.activity_login);
+
     }
 
     @Override
@@ -41,7 +47,9 @@ public class LoginActivity extends BaseActivity{
         btLogin = findViewById(R.id.bt_login);
         etName = findViewById(R.id.et_name);
         etPwd = findViewById(R.id.et_pwd);
+        tv_private = findViewById(R.id.tv_private);
         btLogin.setOnClickListener(this);
+        tv_private.setOnClickListener(this);
 
 
         SPUtil sha = new SPUtil(LoginActivity.this, SPUtil.USER);
@@ -66,10 +74,16 @@ public class LoginActivity extends BaseActivity{
                 alertdialogbuilder.setPositiveButton("知道了", null);
                 AlertDialog alertdialog1 = alertdialogbuilder.create();
                 alertdialog1.show();
-
             }
         });
-        aboutPermission();
+        SPUtil spUtil = new SPUtil(LoginActivity.this,"bghd_lx");
+        String isFirstOpen = spUtil.getString("isFirstOpen","true");
+        if(StringUtils.isEmpty(isFirstOpen) || isFirstOpen.equals("true")){
+            showPrivateDialog();
+            spUtil.putString("isFirstOpen","false");
+        }
+
+
     }
 
     @Override
@@ -89,7 +103,30 @@ public class LoginActivity extends BaseActivity{
                 String pwd = etPwd.getText().toString().trim();
                 loginModel.login(LoginActivity.this,mRequestClient,name,pwd);
                 break;
+            case R.id.tv_private:
+                showPrivateDialog();
+                break;
         }
+    }
+
+    private void showPrivateDialog(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(LoginActivity.this);
+        builder.setTitle("服务协议和隐私政策");
+        builder.setMessage(Constance.PrivacyPolicy);
+        builder.setPositiveButton("暂不使用", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                finish();
+                System.exit(0);
+            }
+        });
+        builder.setNeutralButton("使用", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                aboutPermission();
+            }
+        });
+        builder.show();
     }
 
     private void aboutPermission(){
